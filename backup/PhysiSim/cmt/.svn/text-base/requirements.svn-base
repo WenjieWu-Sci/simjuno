@@ -1,0 +1,11 @@
+package PhysiSim
+
+use SniperRelease   v*
+use DetSimPolicy    v*  Simulation/DetSimV2
+
+library PhysiSim *.cc
+
+apply_pattern linker_library library=PhysiSim
+include_dirs "$(PHYSISIMROOT)/include"
+
+set DAYA_DATA_DIR "$(PHYSISIMROOT)/data"

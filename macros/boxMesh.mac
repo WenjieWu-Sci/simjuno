@@ -1,0 +1,26 @@
+# -- Define scoring mesh, call it "boxMesh_1"
+#
+/score/create/boxMesh boxMesh_1
+/score/mesh/boxSize 5. 5. 5. cm
+/score/mesh/translate/xyz 55. 0. 0. cm
+/score/mesh/nBin 20 10 10
+
+#
+# -- Define scorers
+#
+/score/quantity/energyDeposit eDep
+/score/quantity/trackLength trackLength
+/score/quantity/passageCellCurrent totalCurrent 1
+/score/quantity/passageCellCurrent eCurrent 1
+/score/filter/particle epFilter e-
+#
+/score/close
+# -- By "close", we end the definition of scorer
+
+# -- Print a list of scorers
+/score/list
+
+# -- And now, initialize and run
+/run/initialize
+/run/beamOn 1000
+#
