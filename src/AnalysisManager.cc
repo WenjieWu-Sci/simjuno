@@ -81,31 +81,41 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
     // Hit collections IDs to be looped over ("Don't Repeat Yourself" principle)
     std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId };
     std::vector<G4int> OPTID;
-    for (G4int collectionId : hitCollectionIds) {
-        if (collectionId == -1) continue;
+    for (std::vector<G4int>::iterator collectionId = hitCollectionIds.begin();
+         collectionId != hitCollectionIds.end(); ++collectionId) {
+        if (*collectionId == -1) continue;
         // Get and cast hit collection with EnergyTimeHits
-        EnergyTimeHitsCollection* hitCollection= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(collectionId));
+        EnergyTimeHitsCollection* hitCollection= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*collectionId));
         if (!hitCollection) continue;
 
-        for (auto hit: *hitCollection->GetVector()) {
-            nScintillation+= hit->IsScintillation();
-            nCerenkov+= hit->IsCerenkov();
-            nPhotons+= hit->IsOpticalPhoton();
-            if (hit->GetOPTID()> 0) OPTID.push_back(hit->GetOPTID());
-            if (hit->GetPosVolume() == "world") {
+        std::vector<EnergyTimeHit*> tmp_hitCol = *hitCollection->GetVector();
+        for (std::vector<EnergyTimeHit*>::iterator hit = tmp_hitCol.begin();
+             hit != tmp_hitCol.end(); ++hit) {
+            nScintillation+= ((*hit))->IsScintillation();
+            nCerenkov+= (*hit)->IsCerenkov();
+            nPhotons+= (*hit)->IsOpticalPhoton();
+            if ((*hit)->GetOPTID()> 0) OPTID.push_back((*hit)->GetOPTID());
+            if ((*hit)->GetPosVolume() == "world") {
                 G4bool TagStraight= true;
-                for (G4int id : hitCollectionIds) {
-                    EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(id));
-                    for (auto hitprime: *hitCol->GetVector()) {
-                        if (hitprime->GetTID() == hit->GetTID()) {
-                            if (hitprime->GetProcessName() == "OpRayleigh") {
+                for (std::vector<G4int>::iterator id = hitCollectionIds.begin();
+                     id != hitCollectionIds.end(); ++id) {
+                    EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*id));
+                    int NumScatter(0);
+
+                    std::vector<EnergyTimeHit*> tmp_hitCol_cmp = *hitCol->GetVector();
+                    for (std::vector<EnergyTimeHit*>::iterator hitprime = tmp_hitCol_cmp.begin();
+                         hitprime != tmp_hitCol_cmp.end(); ++hitprime) {
+                        if ((*hitprime)->GetTID() == (*hit)->GetTID()) {
+                            if ((*hitprime)->GetProcessName() == "OpRayleigh") {
                                 TagStraight= false;
-                                break;
+                                NumScatter++;
+                                //break;
                             }
+                            G4cout << "Num of scattering for " << (*hitprime)->GetTID() << " is " << NumScatter << G4endl;
                         }
                     }
-                    if (!TagStraight)
-                        break;
+                    //if (!TagStraight)
+                    //    break;
                 }
                 if (TagStraight)
                     nStraight++;

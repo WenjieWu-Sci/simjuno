@@ -2,13 +2,13 @@
 
 // Task 4e.1: Look how different managers are aliased as RunManager.
 //            (single- or multi-threaded depending on the condition)
-#ifdef G4MULTITHREADED
+/*#ifdef G4MULTITHREADED
     #include <G4MTRunManager.hh>
     using RunManager = G4MTRunManager;
-#else
+#else*/
     #include <G4RunManager.hh>
     using RunManager = G4RunManager;
-#endif
+//#endif
 
 #ifdef G4VIS_USE
     #include <G4VisExecutive.hh>
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     }
 
     // Create the run manager (MT or non-MT) and make it a bit verbose.
-    auto runManager = new RunManager();
+    G4RunManager* runManager = new G4RunManager;
     runManager->SetVerboseLevel(1);
 
     #ifdef G4VIS_USE
@@ -103,10 +103,11 @@ int main(int argc, char** argv)
     // Task 4b.1: You need to access the scoring manager here (or above)
     G4ScoringManager::GetScoringManager();
 
-    for (auto macro : macros)
+    for (std::vector<G4String>::iterator it=macros.begin();\
+         it != macros.end(); ++it)
     {
         G4String command = "/control/execute ";
-        UImanager->ApplyCommand(command + macro);
+        UImanager->ApplyCommand(command + *it);
     }
 
     #ifdef G4UI_USE

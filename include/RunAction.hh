@@ -3,8 +3,8 @@
 
 #include <G4UserRunAction.hh>
 #include <G4Run.hh>
-#include <G4ParticleDefinition.hh>
-#include <G4Accumulable.hh>
+#include "G4ParticleDefinition.hh"
+#include "G4Accumulable.hh"
 
 class RunAction : public G4UserRunAction
 {
