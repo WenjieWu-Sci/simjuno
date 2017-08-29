@@ -1,5 +1,5 @@
 #include "ActionInitialization.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "B2PrimaryGeneratorAction.hh"
 //! Optional user classes
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -8,7 +8,7 @@
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction());
+    SetUserAction(new B2PrimaryGeneratorAction());
     RunAction* theRunAction= new RunAction();
     SetUserAction(theRunAction);
     EventAction* theEventAction= new EventAction();
