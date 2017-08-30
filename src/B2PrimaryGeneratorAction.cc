@@ -57,6 +57,7 @@ B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   fParticleGun->SetParticleEnergy(3.0*GeV);
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -70,25 +71,25 @@ B2PrimaryGeneratorAction::~B2PrimaryGeneratorAction()
 
 void B2PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  // This function is called at the begining of event
+//  // This function is called at the begining of event
 
-  // In order to avoid dependence of PrimaryGeneratorAction
-  // on DetectorConstruction class we get world volume
-  // from G4LogicalVolumeStore.
+//  // In order to avoid dependence of PrimaryGeneratorAction
+//  // on DetectorConstruction class we get world volume
+//  // from G4LogicalVolumeStore.
 
-  G4double worldZHalfLength = 0;
-  G4LogicalVolume* worldLV
-    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
-  G4Box* worldBox = NULL;
-  if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
-  if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
-  else  {
-    G4cerr << "World volume of box not found." << G4endl;
-    G4cerr << "Perhaps you have changed geometry." << G4endl;
-    G4cerr << "The gun will be place in the center." << G4endl;
-  }
+//  G4double worldZHalfLength = 0;
+//  G4LogicalVolume* worldLV
+//    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
+//  G4Box* worldBox = NULL;
+//  if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
+//  if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
+//  else  {
+//    G4cerr << "World volume of box not found." << G4endl;
+//    G4cerr << "Perhaps you have changed geometry." << G4endl;
+//    G4cerr << "The gun will be place in the center." << G4endl;
+//  }
 
-  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -worldZHalfLength));
+//  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }

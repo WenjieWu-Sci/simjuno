@@ -134,7 +134,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                 }
                 if (TagStraight)
                     nStraight++;
-                G4cout << "Num of scattering for " << " " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
+                //G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
                 if(nDetected>0) {
                     TID_Det[nDetected-1]=(*hit)->GetTID();
                     nRayleigh[nDetected-1]=NumScatter;
