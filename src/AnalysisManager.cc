@@ -30,6 +30,9 @@ void AnalysisManager::bookEvtTree() {
     evt->Branch("nCerenkov", &nCerenkov, "nCerenkov/I");
     evt->Branch("nStraight", &nStraight, "nStraight/I");
     evt->Branch("TimeStraight", TimeStraight, "TimeStraight[nStraight]/D");
+    evt->Branch("nDetected",&nDetected,"nDetected/I");
+    evt->Branch("nRayleigh", nRayleigh, "nRayleigh[nDetected]/I");
+    evt->Branch("TID_Det",TID_Det,"TID_Det[nDetected]/I");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -51,12 +54,16 @@ void AnalysisManager::BeginOfEvent() {
     nScintillation= 0;
     nCerenkov= 0;
     nStraight= 0;
+    nDetected =0;
     for (G4int i= 0; i< 200000; ++i) {
         TimeStraight[i]= 0;
+        nRayleigh[i] =0;
+        TID_Det[i] = -1;
     }
 }
 
 void AnalysisManager::EndOfEvent(const G4Event* event) {
+    G4int NumScatter(0);
     G4SDManager* sdm = G4SDManager::GetSDMpointer();
 
     // Get the hit collections
@@ -81,6 +88,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
     // Hit collections IDs to be looped over ("Don't Repeat Yourself" principle)
     std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId };
     std::vector<G4int> OPTID;
+    std::vector<G4int> OPTID_Det;
     for (std::vector<G4int>::iterator collectionId = hitCollectionIds.begin();
          collectionId != hitCollectionIds.end(); ++collectionId) {
         if (*collectionId == -1) continue;
@@ -94,13 +102,21 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
             nScintillation+= ((*hit))->IsScintillation();
             nCerenkov+= (*hit)->IsCerenkov();
             nPhotons+= (*hit)->IsOpticalPhoton();
-            if ((*hit)->GetOPTID()> 0) OPTID.push_back((*hit)->GetOPTID());
-            if ((*hit)->GetPosVolume() == "world") {
+            if ((*hit)->GetOPTID()> 0) {
+                OPTID.push_back((*hit)->GetOPTID());
+            }
+            G4bool IsNew = (std::find(OPTID_Det.begin(),OPTID_Det.end(),(*hit)->GetTID())==OPTID_Det.end());
+            //G4cout << "Track " << (*hit)->GetTID() << " IsNew is " << IsNew <<" StepNo " << (*hit)->GetStepNo() << " Volume " << *collectionId <<" " << (*hit)->GetPosVolume() << G4endl;
+            // find the existence of the track id
+            if ((*hit)->GetPosVolume() == "world" && IsNew) {
+                if ((*hit)->GetParticleID()==0){
+                    OPTID_Det.push_back((*hit)->GetTID());
+                }
+                nDetected+= ((*hit)->GetParticleID()==0?1:0);
                 G4bool TagStraight= true;
                 for (std::vector<G4int>::iterator id = hitCollectionIds.begin();
                      id != hitCollectionIds.end(); ++id) {
                     EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*id));
-                    int NumScatter(0);
 
                     std::vector<EnergyTimeHit*> tmp_hitCol_cmp = *hitCol->GetVector();
                     for (std::vector<EnergyTimeHit*>::iterator hitprime = tmp_hitCol_cmp.begin();
@@ -111,7 +127,6 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                                 NumScatter++;
                                 //break;
                             }
-                            G4cout << "Num of scattering for " << (*hitprime)->GetTID() << " is " << NumScatter << G4endl;
                         }
                     }
                     //if (!TagStraight)
@@ -119,6 +134,12 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                 }
                 if (TagStraight)
                     nStraight++;
+                G4cout << "Num of scattering for " << " " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
+                if(nDetected>0) {
+                    TID_Det[nDetected-1]=(*hit)->GetTID();
+                    nRayleigh[nDetected-1]=NumScatter;
+                }
+                NumScatter=0;
             }
         }
     }

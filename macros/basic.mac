@@ -4,4 +4,7 @@
 # Run it using "./task macros/basic.mac"
 /run/initialize
 /tracking/verbose 1
+/gun/particle e-
+/gun/momentum 0 0 1 MeV
+/gun/position 0 0 0
 /run/beamOn 1

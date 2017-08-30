@@ -78,7 +78,7 @@ void B2PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   G4double worldZHalfLength = 0;
   G4LogicalVolume* worldLV
-    = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
+    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
   G4Box* worldBox = NULL;
   if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
   if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
