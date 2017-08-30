@@ -119,6 +119,7 @@ int main(int argc, char** argv)
         }
     #endif
 
+    delete visManager;
     delete runManager;
     
     std::cout << "Application successfully ended.\nBye :-)" << std::endl;

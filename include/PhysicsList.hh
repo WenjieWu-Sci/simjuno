@@ -7,7 +7,7 @@ class PhysicsList : public G4VModularPhysicsList
 {
 public:
   PhysicsList();
-  ~PhysicsList(){;};
+  ~PhysicsList(){}
 
   //! Optional virtual methods, to gain direct control on 
   //! the particle/processes definition. Not used here

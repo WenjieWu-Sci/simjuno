@@ -45,7 +45,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     CDLog= new G4LogicalVolume(CDSphere, JUNOLS, "CentralDetector");
     G4VisAttributes* CDVis = new G4VisAttributes(G4Colour(0., 0.75, 1.));
     CDVis->SetVisibility(true);
-    CDVis->SetForceSolid(true);
+    CDVis->SetForceSolid(false);
     CDLog->SetVisAttributes(CDVis);
     G4VPhysicalVolume* CDPhys= new G4PVPlacement(nullptr, // no Rotation
                                                  G4ThreeVector(0, 0, 0), // no transportation

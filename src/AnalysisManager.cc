@@ -25,6 +25,7 @@ AnalysisManager::~AnalysisManager() {;}
 
 void AnalysisManager::bookEvtTree() {
     evt= new TTree("evt", "evtTreeInfo");
+    evt->Branch("EventID", &evtID, "EventID/I");
     evt->Branch("nPhotons", &nPhotons, "nPhotons/I");
     evt->Branch("nScintillation", &nScintillation, "nScintillation/I");
     evt->Branch("nCerenkov", &nCerenkov, "nCerenkov/I");
@@ -68,6 +69,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
 
     // Get the hit collections
     G4HCofThisEvent* hcofEvent = event->GetHCofThisEvent(); 
+    evtID = event->GetEventID();
 
     // If there is no hit collection, there is nothing to be done
     if(!hcofEvent) return;

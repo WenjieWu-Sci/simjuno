@@ -12,18 +12,18 @@
 
 PhysicsList::PhysicsList() : G4VModularPhysicsList() {
     // Standard EM physics 
-    RegisterPhysics(new G4EmLivermorePhysics());
+    this->RegisterPhysics(new G4EmLivermorePhysics());
     // Add G4EmExtraPhysics
 //    RegisterPhysics(new G4EmExtraPhysics());
 //    RegisterPhysics(new G4HadronElasticPhysics());
     // Add hadronic physics  
-    RegisterPhysics(new G4HadronPhysicsFTFP_BERT());
+    this->RegisterPhysics(new G4HadronPhysicsFTFP_BERT());
 
     // Optical Physics
-    RegisterPhysics(new G4OpticalPhysics());
+    this->RegisterPhysics(new G4OpticalPhysics());
 
     // Default Decay Physics
-    RegisterPhysics(new G4DecayPhysics());
+    this->RegisterPhysics(new G4DecayPhysics());
 }
 
 void PhysicsList::SetCuts() {
