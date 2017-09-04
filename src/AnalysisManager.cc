@@ -50,7 +50,8 @@ void AnalysisManager::EndOfRun() {
     thefile->Close();
 }
 
-void AnalysisManager::BeginOfEvent() {
+void AnalysisManager::BeginOfEvent(const G4Event* event) {
+    evtID = event->GetEventID();
     nPhotons= 0;
     nScintillation= 0;
     nCerenkov= 0;
@@ -69,7 +70,6 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
 
     // Get the hit collections
     G4HCofThisEvent* hcofEvent = event->GetHCofThisEvent(); 
-    evtID = event->GetEventID();
 
     // If there is no hit collection, there is nothing to be done
     if(!hcofEvent) return;
@@ -134,8 +134,11 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     //if (!TagStraight)
                     //    break;
                 }
-                if (TagStraight)
+                if (TagStraight){
                     nStraight++;
+                    if(nStraight>0)
+                        TimeStraight[nStraight-1]=(*hit)->GetTime();
+                }
                 //G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
                 if(nDetected>0) {
                     TID_Det[nDetected-1]=(*hit)->GetTID();

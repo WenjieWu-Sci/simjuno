@@ -17,6 +17,7 @@ public:
     // Memory allocation and de-allocation
     inline void* operator new(size_t);
     inline void  operator delete(void*);
+    virtual void Print();
     
     void SetStepNo(G4int stepno) { fStepNo= stepno; }
     void SetTID(G4int tid) { fTID= tid; }

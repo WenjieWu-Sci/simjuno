@@ -31,7 +31,7 @@ void EventAction::BeginOfEventAction(const G4Event* event) {
     accumulableManager->Reset();
 
     AnalysisManager* ana= AnalysisManager::GetInstance();
-    ana->BeginOfEvent();
+    ana->BeginOfEvent(event);
 }
 
 void EventAction::EndOfEventAction(const G4Event* event) {

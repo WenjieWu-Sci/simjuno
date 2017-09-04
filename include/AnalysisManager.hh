@@ -14,7 +14,7 @@ class AnalysisManager {
         void bookEvtTree();
         void BeginOfRun();
         void EndOfRun();
-        void BeginOfEvent();
+        void BeginOfEvent(const G4Event *event);
         void EndOfEvent(const G4Event* event);
         
 //    public:

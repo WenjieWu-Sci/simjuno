@@ -11,6 +11,7 @@ public:
     EnergyTimeSD(G4String name);
 
     void Initialize(G4HCofThisEvent*) override;
+    virtual void EndOfEvent(G4HCofThisEvent*);
 
 protected:
     G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) override;
