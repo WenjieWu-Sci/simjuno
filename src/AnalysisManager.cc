@@ -86,11 +86,15 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         fWaterETId= sdm->GetCollectionID("WaterET/energy_time");
         G4cout << "EventAction: Water tank energy_time scorer ID: " << fWaterETId << G4endl;
     }
+    if(fDetectorETId < 0) {
+        fDetectorETId = sdm->GetCollectionID("IdealDetector/energy_time");
+        G4cout << "EventAction: Ideal Detector energy_time scorer ID: " << fDetectorETId << G4endl;
+    }
 
     // Hit collections IDs to be looped over ("Don't Repeat Yourself" principle)
-    std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId };
+    std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId, fDetectorETId };
     std::vector<G4int> OPTID;
-    std::vector<G4int> OPTID_Det;
+//    std::vector<G4int> OPTID_Det;
     for (std::vector<G4int>::iterator collectionId = hitCollectionIds.begin();
          collectionId != hitCollectionIds.end(); ++collectionId) {
         if (*collectionId == -1) continue;
@@ -107,13 +111,13 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
             if ((*hit)->GetOPTID()> 0) {
                 OPTID.push_back((*hit)->GetOPTID());
             }
-            G4bool IsNew = (std::find(OPTID_Det.begin(),OPTID_Det.end(),(*hit)->GetTID())==OPTID_Det.end());
+            //G4bool IsNew = (std::find(OPTID_Det.begin(),OPTID_Det.end(),(*hit)->GetTID())==OPTID_Det.end());
             //G4cout << "Track " << (*hit)->GetTID() << " IsNew is " << IsNew <<" StepNo " << (*hit)->GetStepNo() << " Volume " << *collectionId <<" " << (*hit)->GetPosVolume() << G4endl;
             // find the existence of the track id
-            if ((*hit)->GetPosVolume() == "world" && IsNew) {
-                if ((*hit)->GetParticleID()==0){
-                    OPTID_Det.push_back((*hit)->GetTID());
-                }
+            if ((*hit)->GetPosVolume() == "Detector" && (*hit)->GetProcessName() == "OpAbsorption") {
+//                if ((*hit)->GetParticleID()==0){
+//                    OPTID_Det.push_back((*hit)->GetTID());
+//                }
                 nDetected+= ((*hit)->GetParticleID()==0?1:0);
                 G4bool TagStraight= true;
                 for (std::vector<G4int>::iterator id = hitCollectionIds.begin();
@@ -139,7 +143,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     if(nStraight>0)
                         TimeStraight[nStraight-1]=(*hit)->GetTime();
                 }
-                //G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
+                G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
                 if(nDetected>0) {
                     TID_Det[nDetected-1]=(*hit)->GetTID();
                     nRayleigh[nDetected-1]=NumScatter;

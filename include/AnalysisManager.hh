@@ -40,6 +40,7 @@ class AnalysisManager {
         G4int fLSETId {-1};
         G4int fAcrylicETId { -1 };
         G4int fWaterETId { -1 };
+        G4int fDetectorETId { -1 };
 };
 
 #endif

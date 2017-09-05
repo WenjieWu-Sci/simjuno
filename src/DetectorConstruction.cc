@@ -26,6 +26,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4Material* JUNOLS= MatTable->GetLS();
     G4Material* JUNOAcrylic= MatTable->GetAcrylic();
     G4Material* JUNOWater= MatTable->GetWater();
+    G4Material* black_water = MatTable->GetBlackWater();
+
     G4bool fCheckOverlap= true;
 
     // create a experimental hall with size 50*50*50 m
@@ -99,6 +101,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", CDPhys, AcrylicPhys, OpCDSurf);
     G4LogicalBorderSurface* AcrylicSurf= new G4LogicalBorderSurface("AcrylicSurface", AcrylicPhys, WaterPhys, OpCDSurf);
 
+    // perfect detector
+    G4VSolid* detectorSphere = new G4Sphere("Detector",outer_water,outer_water+1.*mm, 0, 2*pi, 0, pi);
+    detectorLog = new G4LogicalVolume(detectorSphere, black_water, "Detector");
+    G4VisAttributes* detectorVis = new G4VisAttributes();
+    detectorVis->SetVisibility(false);
+    detectorLog->SetVisAttributes(detectorVis);
+    new G4PVPlacement(nullptr,
+                      G4ThreeVector(0., 0., 0.),
+                      detectorLog,
+                      "Detector",
+                      worldLog,
+                      false,
+                      0,
+                      fCheckOverlap);
+
+
     G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 
     return worldPhys;
@@ -119,4 +137,8 @@ void DetectorConstruction::ConstructSDandField() {
     EnergyTimeSD* WaterET= new EnergyTimeSD("WaterET");
     WaterLog->SetSensitiveDetector(WaterET);
     sdManager->AddNewDetector(WaterET);
+
+    EnergyTimeSD* DetectorET = new EnergyTimeSD("IdealDetector");
+    detectorLog->SetSensitiveDetector(DetectorET);
+    sdManager->AddNewDetector(DetectorET);
 }

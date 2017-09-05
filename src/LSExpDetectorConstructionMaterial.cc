@@ -149,3 +149,24 @@ G4Material* LSExpDetectorConstructionMaterial::GetWater() {
 
     return Water;
 }
+
+G4Material* LSExpDetectorConstructionMaterial::GetBlackWater() {
+    // Water
+    G4double density= 1.000*g/cm3;
+    BlackWater = new G4Material("BlackWater", density, 2);
+    BlackWater->AddElement(H,2);
+    BlackWater->AddElement(O,1);
+    G4MaterialPropertiesTable* WaterMPT = new G4MaterialPropertiesTable();
+    WaterMPT->AddProperty("RINDEX", fPP_Water_RIN, fWaterRINDEX,36);
+    //WaterMPT->AddProperty("RINDEX", fPP_Oil_RIN, fOilRINDEX, 9);
+    // scale the water absorption length
+    //double water_abslen_scale_factor = 90.*m/(2651.815*cm);
+    for (int j = 0; j < 316; ++j) {
+        fWaterABSORPTION[j] = 1.*nm;
+    }
+    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+    //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
+    BlackWater->SetMaterialPropertiesTable(WaterMPT);
+
+    return BlackWater;
+}

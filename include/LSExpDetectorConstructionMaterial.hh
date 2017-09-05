@@ -13,6 +13,7 @@ class LSExpDetectorConstructionMaterial {
         G4Material* GetAcrylic();
         G4Material* GetAir();
         G4Material* GetWater();
+        G4Material* GetBlackWater();
 
     private:
         G4Element* C;
@@ -26,6 +27,7 @@ class LSExpDetectorConstructionMaterial {
         G4Material* Acrylic;
         G4Material* Air;
         G4Material* Water;
+        G4Material* BlackWater;
 };
 
 #endif

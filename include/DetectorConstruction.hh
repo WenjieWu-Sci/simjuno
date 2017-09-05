@@ -22,6 +22,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
         G4LogicalVolume* CDLog;
         G4LogicalVolume* AcrylicLog;
         G4LogicalVolume* WaterLog;
+        G4LogicalVolume* detectorLog;
 };
 
 #endif
