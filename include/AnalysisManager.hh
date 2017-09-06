@@ -35,6 +35,7 @@ class AnalysisManager {
         G4int nDetected;
         G4int nRayleigh[200000];
         G4int TID_Det[200000];
+        G4double Time_Det[200000];
 
     private:
         G4int fLSETId {-1};

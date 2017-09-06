@@ -34,6 +34,7 @@ void AnalysisManager::bookEvtTree() {
     evt->Branch("nDetected",&nDetected,"nDetected/I");
     evt->Branch("nRayleigh", nRayleigh, "nRayleigh[nDetected]/I");
     evt->Branch("TID_Det",TID_Det,"TID_Det[nDetected]/I");
+    evt->Branch("Time_Det", Time_Det, "Time_Det[nDetected]/D");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -61,6 +62,7 @@ void AnalysisManager::BeginOfEvent(const G4Event* event) {
         TimeStraight[i]= 0;
         nRayleigh[i] =0;
         TID_Det[i] = -1;
+        Time_Det[i] = 0.;
     }
 }
 
@@ -143,10 +145,11 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     if(nStraight>0)
                         TimeStraight[nStraight-1]=(*hit)->GetTime();
                 }
-                G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
+                //G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
                 if(nDetected>0) {
                     TID_Det[nDetected-1]=(*hit)->GetTID();
                     nRayleigh[nDetected-1]=NumScatter;
+                    Time_Det[nDetected-1]=(*hit)->GetTime();
                 }
                 NumScatter=0;
             }
