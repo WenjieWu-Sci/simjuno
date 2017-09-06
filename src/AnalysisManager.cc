@@ -38,6 +38,7 @@ void AnalysisManager::bookEvtTree() {
     evt->Branch("X_Det", X_Det, "X_Det[nDetected]/D");
     evt->Branch("Y_Det", Y_Det, "Y_Det[nDetected]/D");
     evt->Branch("Z_Det", Z_Det, "Z_Det[nDetected]/D");
+    evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nDetected]/I");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -66,6 +67,10 @@ void AnalysisManager::BeginOfEvent(const G4Event* event) {
         nRayleigh[i] =0;
         TID_Det[i] = -1;
         Time_Det[i] = 0.;
+        X_Det[i] = 0.;
+        Y_Det[i] = 0.;
+        Z_Det[i] = 0.;
+        isCerenkov[i] = -1;
     }
 }
 
@@ -156,6 +161,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     X_Det[nDetected-1]=(*hit)->GetPosition().getX();
                     Y_Det[nDetected-1]=(*hit)->GetPosition().getY();
                     Z_Det[nDetected-1]=(*hit)->GetPosition().getZ();
+                    isCerenkov[nDetected-1]=(*hit)->IsCerenkov();
                 }
                 NumScatter=0;
             }

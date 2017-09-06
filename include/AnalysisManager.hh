@@ -39,6 +39,7 @@ class AnalysisManager {
         G4double X_Det[200000];
         G4double Y_Det[200000];
         G4double Z_Det[200000];
+        G4int isCerenkov[200000];
 
     private:
         G4int fLSETId {-1};
