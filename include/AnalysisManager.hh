@@ -36,6 +36,9 @@ class AnalysisManager {
         G4int nRayleigh[200000];
         G4int TID_Det[200000];
         G4double Time_Det[200000];
+        G4double X_Det[200000];
+        G4double Y_Det[200000];
+        G4double Z_Det[200000];
 
     private:
         G4int fLSETId {-1};
