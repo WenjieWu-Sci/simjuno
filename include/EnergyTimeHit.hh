@@ -32,6 +32,7 @@ public:
     void SetPosition(G4ThreeVector pos) { fPosition = pos; }
     void SetPosVolume(G4String posvol) { fPosVolume= posvol; }
     void SetProcessName(G4String processname) { fProcessName= processname; }
+    void SetFromCerenkov(G4int i) { fFromCerenkov = i; }
 
     G4int GetStepNo() const { return fStepNo; }
     G4int GetTID() const { return fTID; }
@@ -46,6 +47,7 @@ public:
     G4ThreeVector GetPosition() const { return fPosition; }
     G4String GetPosVolume() const { return fPosVolume; }
     G4String GetProcessName() const { return fProcessName; }
+    G4int IsFromCerenkov() const { return fFromCerenkov; }
 
 private:
     G4int fStepNo;
@@ -61,6 +63,7 @@ private:
     G4ThreeVector fPosition;
     G4String fPosVolume;
     G4String fProcessName;
+    G4int fFromCerenkov;
 };
 
 using EnergyTimeHitsCollection = G4THitsCollection<EnergyTimeHit>;

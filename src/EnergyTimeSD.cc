@@ -20,15 +20,19 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     G4int CerenkovTag= 0;
     G4int ScintillationTag= 0;
     G4int OPTIDTag= -1;
-    if (ParticleName== 0 && PID== 1 && StepNo== 1) {
-        OPTIDTag= TID;
-        OpticalPhotonTag= 1;
-        G4String CreatorProcess= aTrack->GetCreatorProcess()->GetProcessName();
-        if (CreatorProcess== "Cerenkov") {
-            CerenkovTag= 1;
-        } else if (CreatorProcess== "Scintillation") {
-            ScintillationTag= 1;
+    G4int FromCerenkovTag=-1;
+    if (ParticleName== 0 && PID== 1) {
+        if(StepNo == 1){
+            OPTIDTag= TID;
+            OpticalPhotonTag= 1;
+            G4String CreatorProcess= aTrack->GetCreatorProcess()->GetProcessName();
+            if (CreatorProcess== "Cerenkov") {
+                CerenkovTag= 1;
+            } else if (CreatorProcess== "Scintillation") {
+                ScintillationTag= 1;
+            }
         }
+        FromCerenkovTag = (aTrack->GetCreatorProcess()->GetProcessName()=="Cerenkov")?1:0;
     }
     G4StepPoint* PreStep= aStep->GetPreStepPoint();
     G4StepPoint* PostStep= aStep->GetPostStepPoint();
@@ -54,6 +58,7 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     hit->SetPosition(Pos);
     hit->SetPosVolume(PosVolume);
     hit->SetProcessName(ProcessName);
+    hit->SetFromCerenkov(FromCerenkovTag);
     
     fHitsCollection->insert(hit);
     return true;

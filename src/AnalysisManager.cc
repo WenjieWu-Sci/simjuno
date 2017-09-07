@@ -161,7 +161,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     X_Det[nDetected-1]=(*hit)->GetPosition().getX();
                     Y_Det[nDetected-1]=(*hit)->GetPosition().getY();
                     Z_Det[nDetected-1]=(*hit)->GetPosition().getZ();
-                    isCerenkov[nDetected-1]=(*hit)->IsCerenkov();
+                    isCerenkov[nDetected-1]=(*hit)->IsFromCerenkov();
                 }
                 NumScatter=0;
             }
