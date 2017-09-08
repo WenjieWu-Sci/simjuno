@@ -7286,4 +7286,3 @@ double fPAABSORPTION_LAB[266] = {
 };
 double fPP_Rock[4] = {1.55*eV, 6.20*eV, 10.33*eV, 15.50*eV};
 double fRockABSORPTION[4] = {1.E-3*mm, 1.E-3*mm, 1.E-3*mm, 1.E-3*mm};
-

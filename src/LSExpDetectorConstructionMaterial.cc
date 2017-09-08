@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Material database
+ * GetLS(): LS
+ * GetAcrylic(): Acrylic
+ * GetAir(): Air
+ * GetWater(): Water
+*******************************************************************************/
+
 #include "LSExpDetectorConstructionMaterial.hh"
 #include "OpticalProperty.icc"
 
@@ -13,12 +21,15 @@ LSExpDetectorConstructionMaterial::~LSExpDetectorConstructionMaterial() {
 }
 
 void LSExpDetectorConstructionMaterial::initialize() {
-    C = new G4Element("Carbon", "C" , 6., 12.01*g/mole); 
-    H = new G4Element("Hydrogen", "H" , 1., 1.01*g/mole);
-    O = new G4Element("Oxygen", "O", 8., 16.00*g/mole); 
-    N = new G4Element("Nitrogen", "N", 7., 14.01*g/mole);
-    S = new G4Element("Sulfur", "S", 16., 32.066*g/mole);
-    Ar = new G4Element("Argon", "Ar", 18, 39.948*g/mole);
+    C= new G4Element("Carbon", "C" , 6., 12.01*g/mole); 
+    H= new G4Element("Hydrogen", "H" , 1., 1.01*g/mole);
+    O= new G4Element("Oxygen", "O", 8., 16.00*g/mole); 
+    N= new G4Element("Nitrogen", "N", 7., 14.01*g/mole);
+    S= new G4Element("Sulfur", "S", 16., 32.066*g/mole);
+    Ar= new G4Element("Argon", "Ar", 18, 39.948*g/mole);
+    Fe= new G4Element("Iron", "Fe", 26., 55.845*g/mole);
+    Cr= new G4Element("Chromium", "Cr", 24., 55.9961*g/mole);
+    Ni= new G4Element("Nickel", "Ni", 28., 58.6934*g/mole);
 }
 
 G4Material* LSExpDetectorConstructionMaterial::GetLS() {
@@ -86,7 +97,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
 
 G4Material* LSExpDetectorConstructionMaterial::GetAcrylic() {
     // Acrylic
-    Acrylic = new G4Material("Acrylic", 1.18*g/cm3, 3);
+    Acrylic= new G4Material("Acrylic", 1.18*g/cm3, 3);
     Acrylic->AddElement(C, 0.59984);
     Acrylic->AddElement(H, 0.08055);
     Acrylic->AddElement(O, 0.31961);
@@ -104,7 +115,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetAcrylic() {
 G4Material* LSExpDetectorConstructionMaterial::GetAir() {
     // Air
     G4double density = 1.205e-3*g/cm3;
-    Air = new G4Material("Air", density, 4);
+    Air= new G4Material("Air", density, 4);
     Air->AddElement(N, 0.7550);
     Air->AddElement(O, 0.2321);
     Air->AddElement(Ar, 0.0128);
@@ -132,7 +143,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetAir() {
 G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     // Water
     G4double density= 1.000*g/cm3;
-    Water = new G4Material("Water", density, 2);
+    Water= new G4Material("Water", density, 2);
     Water->AddElement(H,2);
     Water->AddElement(O,1);
     G4MaterialPropertiesTable* WaterMPT = new G4MaterialPropertiesTable();
@@ -148,4 +159,18 @@ G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     Water->SetMaterialPropertiesTable(WaterMPT);
 
     return Water;
+}
+
+G4Material* LSExpDetectorConstructionMaterial::GetStainlessSteel() {
+    // StainlessSteel
+    G4double density= 7.8*g/cm3;
+    StainlessSteel= new G4Material("StainlessSteel", density, 3);
+    StainlessSteel->AddElement(Fe, 0.74);
+    StainlessSteel->AddElement(Cr, 0.08);
+    StainlessSteel->AddElement(Ni, 0.18);
+    G4MaterialPropertiesTable* StainlessSteelMPT= new G4MaterialPropertiesTable();
+    StainlessSteelMPT->AddProperty("ABSLENGTH", fPP_SteelTank, fSteelTankABSORPTION, 4);
+    StainlessSteel->SetMaterialPropertiesTable(StainlessSteelMPT);
+
+    return StainlessSteel;
 }

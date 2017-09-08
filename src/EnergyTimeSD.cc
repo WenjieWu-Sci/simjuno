@@ -3,6 +3,9 @@
 #include <G4SDManager.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4VProcess.hh>
+#include "G4ProcessManager.hh"
+
+//#include "G4StepPoint.hh"
 
 EnergyTimeSD::EnergyTimeSD(G4String name) :
   G4VSensitiveDetector(name)
@@ -37,8 +40,18 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     G4ThreeVector Pos= PostStep->GetPosition();
     G4String PosVolume= PostStep->GetPhysicalVolume()->GetName();
     G4String ProcessName= PostStep->GetProcessDefinedStep()->GetProcessName();
+    G4int StepStatus= PostStep->GetStepStatus();
 
-    //G4cout << "DEBUG : " << ProcessName << G4endl;
+    static G4ThreadLocal G4OpBoundaryProcess* boundary= NULL;
+    G4ProcessManager* pm= aTrack->GetDefinition()->GetProcessManager();
+    G4int nprocesses= pm->GetProcessListLength();
+    G4ProcessVector* pv= pm->GetProcessList();
+    for (G4int i= 0; i< nprocesses; ++i) {
+        if ((*pv)[i]->GetProcessName()=="OpBoundary") {
+            boundary= (G4OpBoundaryProcess*)(*pv)[i];
+            G4cout << "DEBUG : " << boundary->GetStatus() << G4endl;
+        }
+    }
 
     EnergyTimeHit* hit = new EnergyTimeHit();
     hit->SetStepNo(StepNo);

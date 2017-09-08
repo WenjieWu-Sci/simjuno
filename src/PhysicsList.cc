@@ -171,11 +171,11 @@ void PhysicsList::ConstructOp() {
     /*
        fCerenkovProcess->SetVerboseLevel(fVerboseLevel);
        fScintillationProcess->SetVerboseLevel(fVerboseLevel);
-       fAbsorptionProcess->SetVerboseLevel(fVerboseLevel);
        fRayleighScatteringProcess->SetVerboseLevel(fVerboseLevel);
        fMieHGScatteringProcess->SetVerboseLevel(fVerboseLevel);
-       fBoundaryProcess->SetVerboseLevel(fVerboseLevel);
        */
+    fAbsorptionProcess->SetVerboseLevel(1);
+    fBoundaryProcess->SetVerboseLevel(1);
 
     // Use Birks Correction in the Scintillation process
     if(G4Threading::IsMasterThread())
@@ -200,7 +200,7 @@ void PhysicsList::ConstructOp() {
             pmanager->SetProcessOrderingToLast(fScintillationProcess, idxPostStep);
         }
         if (particleName == "opticalphoton") {
-            G4cout << " AddDiscreteProcess to OpticalPhoton " << G4endl;
+            G4cout << " Add Discrete Process to Optical Photon " << G4endl;
             pmanager->AddDiscreteProcess(fAbsorptionProcess);
             pmanager->AddDiscreteProcess(fRayleighScatteringProcess);
             pmanager->AddDiscreteProcess(fMieHGScatteringProcess);
