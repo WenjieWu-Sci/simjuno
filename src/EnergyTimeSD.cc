@@ -54,7 +54,6 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     hit->SetPosition(Pos);
     hit->SetPosVolume(PosVolume);
     hit->SetProcessName(ProcessName);
-    
     fHitsCollection->insert(hit);
     return true;
 }

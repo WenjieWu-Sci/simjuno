@@ -82,7 +82,6 @@ int main(int argc, char** argv)
         visManager->Initialize();
     #endif
 
-    // Task 3b.4: Replace (only temporarily) PhysicsList with QGSP
     runManager->SetUserInitialization(new PhysicsList());
     //runManager->SetUserInitialization(new QGSP_BERT());
 
