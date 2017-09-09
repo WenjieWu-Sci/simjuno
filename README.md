@@ -11,10 +11,10 @@
 7   fUndefined
 
 # G4OpBoundaryProcessStatus
-0   Undefined 
-1   Transmission 
-2   FresnelRefraction 
-3   FresnelReflection 
+0   Undefined
+1   Transmission
+2   FresnelRefraction
+3   FresnelReflection
 4   TotalInternalReflection
 5   LambertianReflection
 6   LobeReflection

@@ -6,10 +6,7 @@
 #include <G4ThreeVector.hh>
 
 /**
-  * Custom hit class used in task 4d.
-  *
-  * It holds infomation about energy deposits and position/time when
-  * traversing a layer.
+  * Custom hit class
   */
 class EnergyTimeHit : public G4VHit
 {
@@ -18,48 +15,41 @@ public:
     inline void* operator new(size_t);
     inline void  operator delete(void*);
     
-    void SetStepNo(G4int stepno) { fStepNo= stepno; }
-    void SetTID(G4int tid) { fTID= tid; }
-    void SetPID(G4int pid) { fPID= pid; }
+    // setter
     void SetParticle(G4int particle) { fParticle= particle; }
-    void SetOPTIDTag(G4int i) { fOPTID= i; }
-    void SetOpticalPhoton(G4int i) { fOpticalPhoton= i; }
-    void SetScintillation(G4int i) { fScintillation= i; }
-    void SetCerenkov(G4int i) { fCerenkov= i; }
-    void SetDeltaEnergy(G4double deltaE) { fDeltaEnergy = deltaE; }
-    void SetTime(G4double time) { fTime = time; }
-    void SetPosition(G4ThreeVector pos) { fPosition = pos; }
-    void SetPosVolume(G4String posvol) { fPosVolume= posvol; }
+    void SetPID(G4int pid) { fPID= pid; }
+    void SetTID(G4int tid) { fTID= tid; }
+    void SetStepNo(G4int stepno) { fStepNo= stepno; }
+    void SetPrePosition(G4ThreeVector pos) { fPrePosition = pos; }
+    void SetPostPosition(G4ThreeVector pos) { fPostPosition = pos; }
+    void SetCreatorProcess(G4String processname) { fCreatorProcess= processname; }
     void SetProcessName(G4String processname) { fProcessName= processname; }
+    void SetBoundaryProcess(G4int isBoundaryProcess) { fBoundaryProcess= isBoundaryProcess; }
+    void SetBoundaryProcessStatus(G4int ProcessStatus) { fOpBoundaryProcessStatus= ProcessStatus; }
 
-    G4int GetStepNo() const { return fStepNo; }
-    G4int GetTID() const { return fTID; }
+    // getter
+    G4int GetParticle() const { return fParticle; }
     G4int GetPID() const { return fPID; }
-    G4int GetParticleID() const { return fParticle; }
-    G4int GetOPTID() const { return fOPTID; }
-    G4int IsOpticalPhoton() const { return fOpticalPhoton; }
-    G4int IsScintillation() const { return fScintillation; }
-    G4int IsCerenkov() const { return fCerenkov; }
-    G4double GetDeltaEnergy() const { return fDeltaEnergy; }
-    G4double GetTime() const { return fTime; }
-    G4ThreeVector GetPosition() const { return fPosition; }
-    G4String GetPosVolume() const { return fPosVolume; }
+    G4int GetTID() const { return fTID; }
+    G4int GetStepNo() const { return fStepNo; }
+    G4ThreeVector GetPrePosition() const { return fPrePosition; }
+    G4ThreeVector GetPostPosition() const { return fPostPosition; }
+    G4String GetCreatorProcess() const { return fCreatorProcess; }
     G4String GetProcessName() const { return fProcessName; }
+    G4int GetBoundaryProcess() const { return fBoundaryProcess; }
+    G4int GetBoundaryProcessStatus() const { return fOpBoundaryProcessStatus; }
 
 private:
-    G4int fStepNo;
-    G4int fTID;
-    G4int fOPTID;
-    G4int fOpticalPhoton;
-    G4int fScintillation;
-    G4int fCerenkov;
-    G4int fPID;
     G4int fParticle;
-    G4double fDeltaEnergy;
-    G4double fTime;
-    G4ThreeVector fPosition;
-    G4String fPosVolume;
+    G4int fPID;
+    G4int fTID;
+    G4int fStepNo;
+    G4ThreeVector fPrePosition;
+    G4ThreeVector fPostPosition;
+    G4String fCreatorProcess;
     G4String fProcessName;
+    G4int fBoundaryProcess;
+    G4int fOpBoundaryProcessStatus;
 };
 
 using EnergyTimeHitsCollection = G4THitsCollection<EnergyTimeHit>;

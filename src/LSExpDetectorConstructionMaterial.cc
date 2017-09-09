@@ -44,11 +44,20 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     G4MaterialPropertiesTable* LSMPT = new G4MaterialPropertiesTable();
 
     LSMPT->AddProperty("RINDEX",   GdLSRefIndexEnergy, GdLSRefIndex, 18);
+    LSMPT->AddProperty("WLSABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("WLSCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddConstProperty("WLSTIMECONSTANT", 4.93*ns);
+    LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
+    LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
+    LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
+    LSMPT->AddConstProperty("YIELDRATIO", 1.);
+    /*
     LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("SLOWCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
+    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
     LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
     LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
     LSMPT->AddConstProperty("YIELDRATIO", 1.);
@@ -70,6 +79,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     LSMPT->AddProperty("NeutronFASTTIMECONSTANT", component, GdLSNeutronFastTimeConstant,2);
     LSMPT->AddProperty("NeutronSLOWTIMECONSTANT", component, GdLSNeutronSlowTimeConstant,2);
     LSMPT->AddProperty("NeutronYIELDRATIO", component, GdLSNeutronYieldRatio,2);
+    */
 
     // Following lines are for new Optical Model.
     // + PART I: Emission by PPO

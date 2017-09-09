@@ -16,6 +16,7 @@
 #include "G4OpRayleigh.hh"
 #include "G4OpMieHG.hh"
 #include "G4OpBoundaryProcess.hh"
+#include "G4OpWLS.hh"
 
 #include "G4LossTableManager.hh"
 #include "G4EmSaturation.hh"
@@ -26,6 +27,7 @@ G4ThreadLocal G4OpAbsorption* PhysicsList::fAbsorptionProcess = 0;
 G4ThreadLocal G4OpRayleigh* PhysicsList::fRayleighScatteringProcess = 0;
 G4ThreadLocal G4OpMieHG* PhysicsList::fMieHGScatteringProcess = 0;
 G4ThreadLocal G4OpBoundaryProcess* PhysicsList::fBoundaryProcess = 0;
+G4ThreadLocal G4OpWLS* PhysicsList::fWLSProcess= 0;
 
 PhysicsList::PhysicsList() : G4VUserPhysicsList() {
 }
@@ -167,6 +169,7 @@ void PhysicsList::ConstructOp() {
     fRayleighScatteringProcess = new G4OpRayleigh();
     fMieHGScatteringProcess = new G4OpMieHG();
     fBoundaryProcess = new G4OpBoundaryProcess();
+    fWLSProcess= new G4OpWLS();
 
     /*
        fCerenkovProcess->SetVerboseLevel(fVerboseLevel);
@@ -205,6 +208,7 @@ void PhysicsList::ConstructOp() {
             pmanager->AddDiscreteProcess(fRayleighScatteringProcess);
             pmanager->AddDiscreteProcess(fMieHGScatteringProcess);
             pmanager->AddDiscreteProcess(fBoundaryProcess);
+            pmanager->AddDiscreteProcess(fWLSProcess);
         }
     }
 }

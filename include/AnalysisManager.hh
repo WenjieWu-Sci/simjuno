@@ -28,13 +28,14 @@ class AnalysisManager {
         TTree* evt;
         G4int evtID;
         G4int nPhotons;
-        G4int nScintillation;
-        G4int nCerenkov;
-        G4int nStraight;
-        G4double TimeStraight[200000];
+        G4int isScintillation[200000];
+        G4int isCerenkov[200000];
+        G4int isReemission[200000];
+        G4int nRayScattering[200000];
+        G4double HitTime[200000];
 
     private:
-        G4int fLSETId {-1};
+        G4int fLSETId { -1 };
         G4int fAcrylicETId { -1 };
         G4int fWaterETId { -1 };
 };

@@ -16,7 +16,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     G4ParticleDefinition* myParticle;
     myParticle= G4ParticleTable::GetParticleTable()->FindParticle("e-");
     fGPS->SetParticleDefinition(myParticle);
-    fGPS->GetCurrentSource()->GetEneDist()->SetMonoEnergy(3*MeV);
+    fGPS->GetCurrentSource()->GetEneDist()->SetMonoEnergy(1*MeV);
     fGPS->GetCurrentSource()->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(1, 0, 0));
 }
 

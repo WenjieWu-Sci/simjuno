@@ -25,11 +25,13 @@ AnalysisManager::~AnalysisManager() {;}
 
 void AnalysisManager::bookEvtTree() {
     evt= new TTree("evt", "evtTreeInfo");
+    evt->Branch("evtID", &evtID, "evtID/I");
     evt->Branch("nPhotons", &nPhotons, "nPhotons/I");
-    evt->Branch("nScintillation", &nScintillation, "nScintillation/I");
-    evt->Branch("nCerenkov", &nCerenkov, "nCerenkov/I");
-    evt->Branch("nStraight", &nStraight, "nStraight/I");
-    evt->Branch("TimeStraight", TimeStraight, "TimeStraight[nStraight]/D");
+    evt->Branch("isScintillation", isScintillation, "isScintillation[nPhotons]/I");
+    evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nPhotons]/I");
+    evt->Branch("isReemission", isReemission, "isReemission[nPhotons]/I");
+    evt->Branch("nRayScattering", nRayScattering, "nRayScattering[nPhotons]/I");
+//    evt->Branch("HitTime", HitTime, "HitTime[nPhotons]/D");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -48,36 +50,36 @@ void AnalysisManager::EndOfRun() {
 
 void AnalysisManager::BeginOfEvent() {
     nPhotons= 0;
-    nScintillation= 0;
-    nCerenkov= 0;
-    nStraight= 0;
     for (G4int i= 0; i< 200000; ++i) {
-        TimeStraight[i]= 0;
+        isScintillation[i]= 0;
+        isCerenkov[i]= 0;
+        isReemission[i]= 0;
+        nRayScattering[i]= 0;
+        HitTime[i]= 0;
     }
 }
 
 void AnalysisManager::EndOfEvent(const G4Event* event) {
-    G4SDManager* sdm = G4SDManager::GetSDMpointer();
+    // Branch: evtID
+    evtID= event->GetEventID();
 
+    G4SDManager* sdm = G4SDManager::GetSDMpointer();
     // Get the hit collections
     G4HCofThisEvent* hcofEvent = event->GetHCofThisEvent(); 
-
     // If there is no hit collection, there is nothing to be done
     if(!hcofEvent) return;
-
     if (fLSETId< 0) {
         fLSETId= sdm->GetCollectionID("LSET/energy_time");
-        G4cout << "EventAction: central detector energy_time scorer ID: " << fLSETId << G4endl;
+        G4cout << "EventAction: central detector SD ID: " << fLSETId << G4endl;
     }
     if (fAcrylicETId < 0) {
         fAcrylicETId= sdm->GetCollectionID("AcrylicET/energy_time");
-        G4cout << "EventAction: Acrylic ball energy_time scorer ID: " << fAcrylicETId << G4endl;
+        G4cout << "EventAction: Acrylic ball SD ID: " << fAcrylicETId << G4endl;
     }
     if (fWaterETId < 0) {
         fWaterETId= sdm->GetCollectionID("WaterET/energy_time");
-        G4cout << "EventAction: Water tank energy_time scorer ID: " << fWaterETId << G4endl;
+        G4cout << "EventAction: Water tank SD ID: " << fWaterETId << G4endl;
     }
-
     // Hit collections IDs to be looped over ("Don't Repeat Yourself" principle)
     std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId };
     std::vector<G4int> OPTID;
@@ -88,15 +90,40 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         if (!hitCollection) continue;
 
         for (auto hit: *hitCollection->GetVector()) {
-            nScintillation+= hit->IsScintillation();
-            nCerenkov+= hit->IsCerenkov();
-            nPhotons+= hit->IsOpticalPhoton();
-            if (hit->GetOPTID()> 0) OPTID.push_back(hit->GetOPTID());
-            if (hit->GetPosVolume() == "world") {
-                G4bool TagStraight= true;
+            if (hit->GetParticle()==0 && hit->GetBoundaryProcess() && hit->GetBoundaryProcessStatus()==10) {
+                G4int tmp_nRayScattering= 0;
+                nPhotons++;
                 for (G4int id : hitCollectionIds) {
                     EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(id));
                     for (auto hitprime: *hitCol->GetVector()) {
+                        if (hitprime->GetTID() == hit->GetTID()) {
+                            if (hitprime->GetProcessName()=="OpRayleigh") {
+                                tmp_nRayScattering++;
+                            }
+                            if (hitprime->GetStepNo() == 1) {
+                                G4cout << "hello " << hitprime->GetCreatorProcess() << G4endl;
+                                if (hitprime->GetCreatorProcess()=="Scintillation") {
+                                    isScintillation[nPhotons-1]= 1;
+                                }
+                                if (hitprime->GetCreatorProcess()=="Cerenkov") {
+                                    isCerenkov[nPhotons-1]= 1;
+                                }
+                                if (hitprime->GetCreatorProcess()=="OpWLS") {
+                                    isReemission[nPhotons-1]= 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                nRayScattering[nPhotons-1]= tmp_nRayScattering;
+            }
+//            nPhotons+= hit->IsOpticalPhoton();
+            /*
+            isScintillation= hit->IsScintillation();
+            isCerenkov= hit->IsCerenkov();
+            if (hit->GetOPTID()> 0) OPTID.push_back(hit->GetOPTID());
+            if (hit->GetPosVolume() == "world") {
+                G4bool TagStraight= true;
                         if (hitprime->GetTID() == hit->GetTID()) {
                             if (hitprime->GetProcessName() == "OpRayleigh") {
                                 TagStraight= false;
@@ -110,6 +137,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                 if (TagStraight)
                     nStraight++;
             }
+            */
         }
     }
 
