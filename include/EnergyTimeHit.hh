@@ -26,6 +26,7 @@ public:
     void SetProcessName(G4String processname) { fProcessName= processname; }
     void SetBoundaryProcess(G4int isBoundaryProcess) { fBoundaryProcess= isBoundaryProcess; }
     void SetBoundaryProcessStatus(G4int ProcessStatus) { fOpBoundaryProcessStatus= ProcessStatus; }
+    void SetPostStepTime(G4double time) { fPostStepTime= time; }
 
     // getter
     G4int GetParticle() const { return fParticle; }
@@ -38,6 +39,7 @@ public:
     G4String GetProcessName() const { return fProcessName; }
     G4int GetBoundaryProcess() const { return fBoundaryProcess; }
     G4int GetBoundaryProcessStatus() const { return fOpBoundaryProcessStatus; }
+    G4double GetPostStepTime() const { return fPostStepTime; }
 
 private:
     G4int fParticle;
@@ -50,6 +52,7 @@ private:
     G4String fProcessName;
     G4int fBoundaryProcess;
     G4int fOpBoundaryProcessStatus;
+    G4double fPostStepTime;
 };
 
 using EnergyTimeHitsCollection = G4THitsCollection<EnergyTimeHit>;

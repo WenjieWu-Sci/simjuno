@@ -27,11 +27,15 @@ void AnalysisManager::bookEvtTree() {
     evt= new TTree("evt", "evtTreeInfo");
     evt->Branch("evtID", &evtID, "evtID/I");
     evt->Branch("nPhotons", &nPhotons, "nPhotons/I");
+    evt->Branch("detX", detX, "detX[nPhotons]/D");
+    evt->Branch("detY", detY, "detY[nPhotons]/D");
+    evt->Branch("detZ", detZ, "detZ[nPhotons]/D");
+    evt->Branch("hitTime", HitTime, "hitTime[nPhotons]/D");
     evt->Branch("isScintillation", isScintillation, "isScintillation[nPhotons]/I");
     evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nPhotons]/I");
     evt->Branch("isReemission", isReemission, "isReemission[nPhotons]/I");
+//    evt->Branch("ProcessStatus", ProcessStatus, "ProcessStatus[nPhotons]/I");
     evt->Branch("nRayScattering", nRayScattering, "nRayScattering[nPhotons]/I");
-//    evt->Branch("HitTime", HitTime, "HitTime[nPhotons]/D");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -51,11 +55,12 @@ void AnalysisManager::EndOfRun() {
 void AnalysisManager::BeginOfEvent() {
     nPhotons= 0;
     for (G4int i= 0; i< 200000; ++i) {
+        HitTime[i]= 0;
         isScintillation[i]= 0;
         isCerenkov[i]= 0;
         isReemission[i]= 0;
+//        ProcessStatus[i]= 0;
         nRayScattering[i]= 0;
-        HitTime[i]= 0;
     }
 }
 
@@ -89,19 +94,29 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         EnergyTimeHitsCollection* hitCollection= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(collectionId));
         if (!hitCollection) continue;
 
+        // Branch: nPhotons, HitTime, isScintillation, isCerenkov, isReemission
+        // Branch: ProcessStatus, nRayScattering
         for (auto hit: *hitCollection->GetVector()) {
-            if (hit->GetParticle()==0 && hit->GetBoundaryProcess() && hit->GetBoundaryProcessStatus()==10) {
+            if (hit->GetParticle()==0 && hit->GetBoundaryProcess() && 
+                hit->GetBoundaryProcessStatus()==10 && hit->GetProcessName()=="Transportation") {
                 G4int tmp_nRayScattering= 0;
+                G4int StraightTag= 0;
                 nPhotons++;
+                HitTime[nPhotons-1]= hit->GetPostStepTime();
+                detX[nPhotons-1]= hit->GetPostPosition().getX();
+                detY[nPhotons-1]= hit->GetPostPosition().getY();
+                detZ[nPhotons-1]= hit->GetPostPosition().getZ();
+//                ProcessStatus[nPhotons-1]= hit->GetProcessName();
                 for (G4int id : hitCollectionIds) {
                     EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(id));
                     for (auto hitprime: *hitCol->GetVector()) {
+                        // select the same particle using TID
                         if (hitprime->GetTID() == hit->GetTID()) {
                             if (hitprime->GetProcessName()=="OpRayleigh") {
                                 tmp_nRayScattering++;
                             }
+                            // select the first step to get their creator process
                             if (hitprime->GetStepNo() == 1) {
-                                G4cout << "hello " << hitprime->GetCreatorProcess() << G4endl;
                                 if (hitprime->GetCreatorProcess()=="Scintillation") {
                                     isScintillation[nPhotons-1]= 1;
                                 }

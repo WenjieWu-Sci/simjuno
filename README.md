@@ -1,5 +1,18 @@
 # simjuno
 
+# Output root file
+TTree   evt  
+Branch  evtID  
+        nPhotons  
+        detX  
+        detY  
+        detZ  
+        hitTime  
+        isScintillation  
+        isCerenkov  
+        isReemission  
+        nRayScattering  
+
 # G4StepStatus
 0   fWorldBoundary
 1   fGeomBoundary

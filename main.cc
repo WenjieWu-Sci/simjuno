@@ -51,22 +51,15 @@ int main(int argc, char** argv)
     bool interactive = false;
 
     // Parse command line arguments
-    if  (argc == 1)
-    {
+    if  (argc == 1) {
         interactive = true;
-    }
-    else
-    {
-        for (int i = 1; i < argc; i++)
-        {
+    } else {
+        for (int i = 1; i < argc; i++) {
             G4String arg = argv[i];
-            if (arg == "-i" || arg == "--interactive")
-            {
+            if (arg == "-i" || arg == "--interactive") {
                 interactive = true;
                 continue;
-            }
-            else
-            {
+            } else {
                 macros.push_back(arg);
             }
         }
@@ -85,7 +78,6 @@ int main(int argc, char** argv)
     runManager->SetUserInitialization(new PhysicsList());
     //runManager->SetUserInitialization(new QGSP_BERT());
 
-    // Task 1: See that we instantiate the detector construction here
     runManager->SetUserInitialization(new DetectorConstruction());
     runManager->SetUserInitialization(new ActionInitialization());
 
@@ -100,7 +92,7 @@ int main(int argc, char** argv)
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
     // Task 4b.1: You need to access the scoring manager here (or above)
-    G4ScoringManager::GetScoringManager();
+    //G4ScoringManager::GetScoringManager();
 
     for (auto macro : macros)
     {

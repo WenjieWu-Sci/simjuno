@@ -54,9 +54,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     worldLog->SetVisAttributes(visAttr);
     G4VPhysicalVolume* worldPhys = new G4PVPlacement(nullptr, {}, worldLog, "world", nullptr, false, 0);
 
-    // CD
-    G4VSolid* CDSphere= new G4Sphere("CentralDetector", 0, radius, 0, 2*pi, 0, pi);
-    CDLog= new G4LogicalVolume(CDSphere, JUNOLS, "CentralDetector");
+    // LS ball 
+    G4VSolid* CDSphere= new G4Sphere("LSBall", 0, radius, 0, 2*pi, 0, pi);
+    CDLog= new G4LogicalVolume(CDSphere, JUNOLS, "LSBall");
     G4VisAttributes* CDVis = new G4VisAttributes(G4Colour(0., 0.75, 1.));
     CDVis->SetVisibility(true);
     CDVis->SetForceSolid(true);
@@ -64,13 +64,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     G4VPhysicalVolume* CDPhys= new G4PVPlacement(nullptr, // no Rotation
             G4ThreeVector(0, 0, 0), // no transportation
             CDLog,                  // current logical volume
-            "CentralDetector",      // Name
+            "LSBall",               // Name
             worldLog,               // mother logical volume
             false,                  // pMany
             0,                      // Copy No
             fCheckOverlap);
 
-    // Acrylic ball
+    // Acrylic
     G4VSolid* AcrylicSphere= new G4Sphere("AcrylicBall", inner_acrylic, outer_acrylic, 0, 2*pi, 0, pi);
     AcrylicLog= new G4LogicalVolume(AcrylicSphere, JUNOAcrylic, "AcrylicBall");
     G4VisAttributes* AcrylicVis= new G4VisAttributes(G4Colour(0., 0.75, 1.));
@@ -86,15 +86,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
             fCheckOverlap);
 
     // Water shield
-    G4VSolid* WaterSphere= new G4Sphere("WaterTank", inner_water, outer_water, 0, 2*pi, 0, pi);
-    WaterLog= new G4LogicalVolume(WaterSphere, JUNOWater, "WaterTank");
+    G4VSolid* WaterSphere= new G4Sphere("WaterShield", inner_water, outer_water, 0, 2*pi, 0, pi);
+    WaterLog= new G4LogicalVolume(WaterSphere, JUNOWater, "WaterShield");
     G4VisAttributes* WaterVis= new G4VisAttributes(G4Colour(0., 0.75, 1.));
     WaterVis->SetVisibility(false);
     WaterLog->SetVisAttributes(WaterVis);
     G4VPhysicalVolume* WaterPhys= new G4PVPlacement(nullptr, // no Rotation
             G4ThreeVector(0, 0, 0), // no transportation
             WaterLog,               // current logical volume
-            "WaterTank",            // Name
+            "WaterShield",          // Name
             worldLog,               // mother logical volume
             false,                  // pMany
             0,                      // Copy No

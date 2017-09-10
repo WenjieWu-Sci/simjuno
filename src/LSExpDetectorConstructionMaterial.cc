@@ -43,15 +43,20 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
 
     G4MaterialPropertiesTable* LSMPT = new G4MaterialPropertiesTable();
 
-    LSMPT->AddProperty("RINDEX",   GdLSRefIndexEnergy, GdLSRefIndex, 18);
+    LSMPT->AddProperty("RINDEX", GdLSRefIndexEnergy, GdLSRefIndex, 18);
+    LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
+    LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
+    LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
+    LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
+    LSMPT->AddConstProperty("YIELDRATIO", 1.);
+    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
+
     LSMPT->AddProperty("WLSABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("WLSCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddConstProperty("WLSTIMECONSTANT", 4.93*ns);
-    LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
-    LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
-    LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
-    LSMPT->AddConstProperty("YIELDRATIO", 1.);
+    //LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
     /*
     LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);

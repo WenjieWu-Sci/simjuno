@@ -6,15 +6,17 @@
 #include "G4ProcessManager.hh"
 #include "G4StepPoint.hh"
 
-EnergyTimeSD::EnergyTimeSD(G4String name) :
-  G4VSensitiveDetector(name)
-{
+EnergyTimeSD::EnergyTimeSD(G4String name) : G4VSensitiveDetector(name) {
     collectionName.insert("energy_time");
 }
 
 G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
-    // Particle type, Parent ID, Track ID, Step No, PreStepPoint, PostStepPoint,
-    // Create process, Process name, isBoundaryProcess, OpBoundaryProcessStatus
+    /***************************************************************************
+     * Records:
+     * Particle type, Parent ID, Track ID, Step No, PreStepPoint, PostStepPoint,
+     * Create process, Process name, isBoundaryProcess, OpBoundaryProcessStatus
+     * PostStepPointTime
+    ***************************************************************************/
     G4Track* aTrack= aStep->GetTrack();
     G4int ParticleName= aTrack->GetParticleDefinition()->GetPDGEncoding();
     G4int PID= aTrack->GetParentID();
@@ -46,16 +48,14 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
             G4cout << "debug (OpBoundaryProcess): " << boundary->GetStatus() << G4endl;
         }
     }
+    G4double PostStepTime= PostStep->GetGlobalTime();
+
     // extra info
     G4double edep= aStep->GetTotalEnergyDeposit();
-    G4double Time= PostStep->GetGlobalTime();
     G4String PosVolume= PostStep->GetPhysicalVolume()->GetName();
     G4int StepStatus= PostStep->GetStepStatus();
 
     // Fill hit information
-    // Particle type, Parent ID, Track ID, Step No, PreStepPoint(X, Y, Z),
-    // PostStepPoint(X, Y, Z), Create process, Process name, isBoundaryProcess,
-    // OpBoundaryProcessStatus
     EnergyTimeHit* hit = new EnergyTimeHit();
     hit->SetParticle(ParticleName);
     hit->SetPID(PID);
@@ -67,6 +67,7 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     hit->SetProcessName(ProcessName);
     hit->SetBoundaryProcess(isBoundaryProcess);
     hit->SetBoundaryProcessStatus(OpBoundaryProcessStatus);
+    hit->SetPostStepTime(PostStepTime);
     fHitsCollection->insert(hit);
     return true;
 }
