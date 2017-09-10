@@ -1,0 +1,16 @@
+# This macro runs optical photon events
+# run it using "./simjuno macros/optPhoton.mac"
+
+/run/initialize
+/tracking/verbose 1
+/gps/particle opticalphoton
+# position
+/gps/pos/type Point
+/gps/pos/centre 0 0 10000 mm
+# direction
+/gps/ang/type iso
+# energy
+/gps/ene/type Mono
+/gps/ene/mono 3 eV
+/run/beamOn 10000000
+

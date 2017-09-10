@@ -4,4 +4,4 @@
 # Run it using "./task macros/basic.mac"
 /run/initialize
 /tracking/verbose 1
-/run/beamOn 1
+/run/beamOn 10
