@@ -25,10 +25,12 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack (const G4Track*
     // Register optical photons
     if (aTrack->GetParticleDefinition() == G4OpticalPhoton::Definition()) {
         fEventAction->AddOP();
-        if (aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov") {
-            fEventAction->AddCerenkovOP();
-        } else if (aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation") {
-            fEventAction->AddScintillatorOP();
+        if(aTrack->GetCreatorProcess()!=0){
+            if (aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov") {
+                fEventAction->AddCerenkovOP();
+            } else if (aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation") {
+                fEventAction->AddScintillatorOP();
+            }
         }
     }
 
