@@ -5,6 +5,7 @@
 #include <G4Event.hh>
 #include <TFile.h>
 #include <TTree.h>
+#include "AnalysisManagerMessenger.hh"
 
 class AnalysisManager {
     public:
@@ -17,14 +18,15 @@ class AnalysisManager {
         void BeginOfEvent();
         void EndOfEvent(const G4Event* event);
         
-//    public:
-//        void SetNScintillation(G4int i) { nScintillation= i; }
-//        void SetNCerenkov(G4int i) { nCerenkov= i; }
+    public:
+        void setFileName(G4String i) { m_filename= i; }
 
     private:
         static AnalysisManager* instance;
+        AnalysisManagerMessenger* messenger;
 
         TFile* thefile;
+        TString m_filename;
         TTree* evt;
         G4int evtID;
         G4int nPhotons;

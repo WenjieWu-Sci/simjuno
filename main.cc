@@ -1,7 +1,7 @@
 #include <vector>
 
-// Task 4e.1: Look how different managers are aliased as RunManager.
-//            (single- or multi-threaded depending on the condition)
+// Look how different managers are aliased as RunManager.
+// (single- or multi-threaded depending on the condition)
 #ifdef G4MULTITHREADED
     #include <G4MTRunManager.hh>
     using RunManager = G4MTRunManager;

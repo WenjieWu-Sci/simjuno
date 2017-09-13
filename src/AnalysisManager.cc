@@ -19,6 +19,8 @@ AnalysisManager* AnalysisManager::GetInstance() {
 
 AnalysisManager::AnalysisManager() {
     evt= 0;
+    messenger= new AnalysisManagerMessenger(this);
+    m_filename= "test.root";
 }
 
 AnalysisManager::~AnalysisManager() {;}
@@ -45,7 +47,7 @@ void AnalysisManager::BeginOfRun() {
     if (thefile) {
         delete thefile;
     }
-    thefile= new TFile("simjunotest.root", "RECREATE");
+    thefile= new TFile(m_filename, "RECREATE");
     bookEvtTree();
 }
 
