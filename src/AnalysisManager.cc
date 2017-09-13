@@ -31,6 +31,8 @@ void AnalysisManager::bookEvtTree() {
     evt->Branch("detY", detY, "detY[nPhotons]/D");
     evt->Branch("detZ", detZ, "detZ[nPhotons]/D");
     evt->Branch("hitTime", HitTime, "hitTime[nPhotons]/D");
+    evt->Branch("PID", PID, "PID[nPhotons]/I");
+    evt->Branch("TID", TID, "TID[nPhotons]/I");
     evt->Branch("isScintillation", isScintillation, "isScintillation[nPhotons]/I");
     evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nPhotons]/I");
     evt->Branch("isReemission", isReemission, "isReemission[nPhotons]/I");
@@ -56,6 +58,8 @@ void AnalysisManager::BeginOfEvent() {
     nPhotons= 0;
     for (G4int i= 0; i< 200000; ++i) {
         HitTime[i]= 0;
+        PID[i]= -1;
+        TID[i]= -1;
         isScintillation[i]= 0;
         isCerenkov[i]= 0;
         isReemission[i]= 0;
@@ -97,15 +101,17 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         // Branch: nPhotons, HitTime, isScintillation, isCerenkov, isReemission
         // Branch: ProcessStatus, nRayScattering
         for (auto hit: *hitCollection->GetVector()) {
-            if (hit->GetParticle()==0 && hit->GetBoundaryProcess() && 
+            if (hit->GetParticle()==20022 && hit->GetBoundaryProcess() && hit->GetTrackStatus()==2 &&
                 hit->GetBoundaryProcessStatus()==10 && hit->GetProcessName()=="Transportation") {
                 G4int tmp_nRayScattering= 0;
-                G4int StraightTag= 0;
+//                G4int StraightTag= 0;
                 nPhotons++;
-                HitTime[nPhotons-1]= hit->GetPostStepTime();
                 detX[nPhotons-1]= hit->GetPostPosition().getX();
                 detY[nPhotons-1]= hit->GetPostPosition().getY();
                 detZ[nPhotons-1]= hit->GetPostPosition().getZ();
+                HitTime[nPhotons-1]= hit->GetPostStepTime();
+                PID[nPhotons-1]= hit->GetPID();
+                TID[nPhotons-1]= hit->GetTID();
 //                ProcessStatus[nPhotons-1]= hit->GetProcessName();
                 for (G4int id : hitCollectionIds) {
                     EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(id));

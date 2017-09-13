@@ -23,15 +23,9 @@
 
 #include "ActionInitialization.hh"
 
-// Task 1: See that we need to include the proper header
 #include "DetectorConstruction.hh"
-#include "PhysicsList.hh"
-
-// Task 3b.4: Include (temporarily if you want) header for QGSP
-#include "QGSP_BERT.hh"
-
-// Task 4b.1: Include the proper header to enable scoring manager
-#include "G4ScoringManager.hh"
+#include "LSExpPhysicsList.hh"
+//#include "QGSP_BERT.hh"
 
 #include "AnalysisManager.hh"
 
@@ -75,7 +69,7 @@ int main(int argc, char** argv)
         visManager->Initialize();
     #endif
 
-    runManager->SetUserInitialization(new PhysicsList());
+    runManager->SetUserInitialization(new LSExpPhysicsList());
     //runManager->SetUserInitialization(new QGSP_BERT());
 
     runManager->SetUserInitialization(new DetectorConstruction());
@@ -90,9 +84,6 @@ int main(int argc, char** argv)
     #endif
 
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
-
-    // Task 4b.1: You need to access the scoring manager here (or above)
-    //G4ScoringManager::GetScoringManager();
 
     for (auto macro : macros)
     {

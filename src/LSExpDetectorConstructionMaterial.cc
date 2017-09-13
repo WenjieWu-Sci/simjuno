@@ -46,28 +46,22 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     LSMPT->AddProperty("RINDEX", GdLSRefIndexEnergy, GdLSRefIndex, 18);
     LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
-    LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
-    LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
-    LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
-    LSMPT->AddConstProperty("YIELDRATIO", 1.);
-    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
-
-    LSMPT->AddProperty("WLSABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    LSMPT->AddProperty("WLSCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    LSMPT->AddConstProperty("WLSTIMECONSTANT", 4.93*ns);
-    //LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    /*
-    LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("SLOWCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
     LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
     LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
+    //LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
+    //LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
+    LSMPT->AddConstProperty("FASTTIMECONSTANT", 0.0*ns);
+    LSMPT->AddConstProperty("SLOWTIMECONSTANT", 0.0*ns);
     LSMPT->AddConstProperty("YIELDRATIO", 1.);
-    LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
-    LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
+//    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
+    LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
+
+//    LSMPT->AddProperty("WLSABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+//    LSMPT->AddProperty("WLSCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+//    LSMPT->AddConstProperty("WLSTIMECONSTANT", 4.93*ns);
+
     // add fast/slow time constant for reemission
     LSMPT->AddProperty("ReemissionFASTTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
     LSMPT->AddProperty("ReemissionSLOWTIMECONSTANT", component, GdLSReemissionSlowTimeConstant,2);
@@ -84,7 +78,6 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     LSMPT->AddProperty("NeutronFASTTIMECONSTANT", component, GdLSNeutronFastTimeConstant,2);
     LSMPT->AddProperty("NeutronSLOWTIMECONSTANT", component, GdLSNeutronSlowTimeConstant,2);
     LSMPT->AddProperty("NeutronYIELDRATIO", component, GdLSNeutronYieldRatio,2);
-    */
 
     // Following lines are for new Optical Model.
     // + PART I: Emission by PPO
@@ -95,15 +88,15 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     //     + XXXCOMPONENT, maybe FAST/SLOW
     //     + XXXTIMECONSTANT, maybe FAST/SLOW
     //   XXX in [PPO, bisMSB, LAB]
-    //LSMPT->AddProperty("PPOABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    //LSMPT->AddProperty("PPOREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    //LSMPT->AddProperty("PPOCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    //LSMPT->AddProperty("PPOTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
+    LSMPT->AddProperty("PPOABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("PPOREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    LSMPT->AddProperty("PPOCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddProperty("PPOTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
 
-    //LSMPT->AddProperty("bisMSBABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    //LSMPT->AddProperty("bisMSBREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    //LSMPT->AddProperty("bisMSBCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    //LSMPT->AddProperty("bisMSBTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
+    LSMPT->AddProperty("bisMSBABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("bisMSBREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    LSMPT->AddProperty("bisMSBCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddProperty("bisMSBTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
 
     LS->SetMaterialPropertiesTable(LSMPT);
 

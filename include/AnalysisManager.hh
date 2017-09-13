@@ -32,6 +32,8 @@ class AnalysisManager {
         G4double detY[200000];
         G4double detZ[200000];
         G4double HitTime[200000];
+        G4int PID[200000];
+        G4int TID[200000];
         G4int isScintillation[200000];
         G4int isCerenkov[200000];
         G4int isReemission[200000];

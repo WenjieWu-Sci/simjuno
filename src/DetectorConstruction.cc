@@ -115,11 +115,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
             0,                      // Copy No
             fCheckOverlap);
 
-    G4OpticalSurface* OpCDSurf= new G4OpticalSurface("OpCDSurface");
-    OpCDSurf->SetType(dielectric_dielectric);
-    OpCDSurf->SetFinish(polished);
-    G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", CDPhys, AcrylicPhys, OpCDSurf);
-    G4LogicalBorderSurface* AcrylicSurf= new G4LogicalBorderSurface("AcrylicSurface", AcrylicPhys, WaterPhys, OpCDSurf);
+//    G4OpticalSurface* OpCDSurf= new G4OpticalSurface("OpCDSurface");
+//    OpCDSurf->SetType(dielectric_dielectric);
+//    OpCDSurf->SetFinish(polished);
+//    G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", CDPhys, AcrylicPhys, OpCDSurf);
+//    G4LogicalBorderSurface* AcrylicSurf= new G4LogicalBorderSurface("AcrylicSurface", AcrylicPhys, WaterPhys, OpCDSurf);
 
     G4double Ene_Steel[2]= {1.0*eV, 15.0*eV};
     G4double REFLECTIVITY_Steel[2]= {0.0, 0.0};
@@ -132,7 +132,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     SteelSurfMPT->AddProperty("REFLECTIVITY", Ene_Steel, REFLECTIVITY_Steel, 2);;
     SteelSurfMPT->AddProperty("EFFICIENCY", Ene_Steel, EFFICIENCY_Steel, 2);
     OpSSteelSurf->SetMaterialPropertiesTable(SteelSurfMPT);
-    G4LogicalBorderSurface* SteelSurf= new G4LogicalBorderSurface("SteelSurface", WaterPhys, SteelPhys, OpSSteelSurf);
+//    G4LogicalBorderSurface* SteelSurf= new G4LogicalBorderSurface("SteelSurface", WaterPhys, SteelPhys, OpSSteelSurf);
+    G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", CDPhys, AcrylicPhys, OpSSteelSurf);
 
     G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 

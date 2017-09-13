@@ -18,6 +18,8 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
      * PostStepPointTime
     ***************************************************************************/
     G4Track* aTrack= aStep->GetTrack();
+    G4int TrackStatus= aTrack->GetTrackStatus();
+    G4cout << "debug (track status): " << TrackStatus << G4endl;
     G4int ParticleName= aTrack->GetParticleDefinition()->GetPDGEncoding();
     G4int PID= aTrack->GetParentID();
     G4int TID= aTrack->GetTrackID();
@@ -29,10 +31,10 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     G4String CreatorProcess;
     if ( PID> 0 ) {
         CreatorProcess= aTrack->GetCreatorProcess()->GetProcessName();
-        G4cout << "debug (create process): " << CreatorProcess << G4endl;
     } else {
         CreatorProcess= "PrimaryParticle";
     }
+    G4cout << "debug (create process): " << CreatorProcess << G4endl;
     G4String ProcessName= PostStep->GetProcessDefinedStep()->GetProcessName();
     static G4ThreadLocal G4OpBoundaryProcess* boundary= NULL;
     G4ProcessManager* pm= aTrack->GetDefinition()->GetProcessManager();
@@ -46,6 +48,7 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
             boundary= (G4OpBoundaryProcess*)(*pv)[i];
             OpBoundaryProcessStatus= boundary->GetStatus();
             G4cout << "debug (OpBoundaryProcess): " << boundary->GetStatus() << G4endl;
+            G4cout << "StepNo: " << StepNo << " " << PrePos.getX() << " " << PostPos.getX() << G4endl;
         }
     }
     G4double PostStepTime= PostStep->GetGlobalTime();
@@ -57,6 +60,7 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
 
     // Fill hit information
     EnergyTimeHit* hit = new EnergyTimeHit();
+    hit->SetTrackStatus(TrackStatus);
     hit->SetParticle(ParticleName);
     hit->SetPID(PID);
     hit->SetTID(TID);

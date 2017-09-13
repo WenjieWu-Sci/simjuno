@@ -16,6 +16,7 @@ public:
     inline void  operator delete(void*);
     
     // setter
+    void SetTrackStatus(G4int trackstatus) { fTrackStatus= trackstatus; }
     void SetParticle(G4int particle) { fParticle= particle; }
     void SetPID(G4int pid) { fPID= pid; }
     void SetTID(G4int tid) { fTID= tid; }
@@ -29,6 +30,7 @@ public:
     void SetPostStepTime(G4double time) { fPostStepTime= time; }
 
     // getter
+    G4int GetTrackStatus() const { return fTrackStatus; }
     G4int GetParticle() const { return fParticle; }
     G4int GetPID() const { return fPID; }
     G4int GetTID() const { return fTID; }
@@ -42,6 +44,7 @@ public:
     G4double GetPostStepTime() const { return fPostStepTime; }
 
 private:
+    G4int fTrackStatus;
     G4int fParticle;
     G4int fPID;
     G4int fTID;
