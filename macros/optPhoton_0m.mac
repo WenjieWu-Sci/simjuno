@@ -4,12 +4,12 @@
 /run/initialize
 /tracking/verbose 1
 # output filename
-/histo/fileName 10m.root
+/histo/fileName 0m.root
 # incident particle
 /gps/particle opticalphoton
 # position
 /gps/pos/type Point
-/gps/pos/centre 0 0 10000 mm
+/gps/pos/centre 0 0 0 mm
 # direction
 /gps/ang/type iso
 # energy

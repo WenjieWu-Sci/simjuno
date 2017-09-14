@@ -3,6 +3,9 @@
 
 /run/initialize
 /tracking/verbose 1
+# output filename
+/histo/fileName 15m.root
+# incident particle
 /gps/particle opticalphoton
 # position
 /gps/pos/type Point
@@ -11,6 +14,6 @@
 /gps/ang/type iso
 # energy
 /gps/ene/type Mono
-/gps/ene/mono 3 eV
+/gps/ene/mono 2 eV
 /run/beamOn 10000000
 
