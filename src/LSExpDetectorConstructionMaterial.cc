@@ -4,9 +4,20 @@
 #include <G4Element.hh>
 #include <G4Material.hh>
 #include <G4MaterialPropertiesTable.hh>
+#include "G4GenericMessenger.hh"
 
-LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial() {
+LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial()
+    :fMessenger(0),
+     fTrueMaterial(true)
+{
     initialize();
+    fMessenger
+            =new G4GenericMessenger(this, "/JUNO/det/","detecter");
+    fMessenger
+            ->DeclareProperty("setTrueMaterial",
+                              fTrueMaterial,
+                              "Enable True Material")
+            .SetStates(G4State_PreInit,G4State_Init,G4State_Idle);
 }
 
 LSExpDetectorConstructionMaterial::~LSExpDetectorConstructionMaterial() {
@@ -32,12 +43,14 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
 
     G4MaterialPropertiesTable* LSMPT = new G4MaterialPropertiesTable();
 
+    if(fTrueMaterial){
+        LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+        LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
+        LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    }
     LSMPT->AddProperty("RINDEX",   GdLSRefIndexEnergy, GdLSRefIndex, 18);
-    LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("SLOWCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
     LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
     LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
     LSMPT->AddConstProperty("YIELDRATIO", 1.);
@@ -143,7 +156,8 @@ G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     for (int j = 0; j < 316; ++j) {
         fWaterABSORPTION[j] *= water_abslen_scale_factor;
     }
-    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+    if(fTrueMaterial)
+        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
     //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
     Water->SetMaterialPropertiesTable(WaterMPT);
 
@@ -164,7 +178,8 @@ G4Material* LSExpDetectorConstructionMaterial::GetBlackWater() {
     for (int j = 0; j < 316; ++j) {
         fWaterABSORPTION[j] = 1.*nm;
     }
-    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+    if(fTrueMaterial)
+        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
     //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
     BlackWater->SetMaterialPropertiesTable(WaterMPT);
 

@@ -38,13 +38,17 @@
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4GenericMessenger.hh"
 
 #include "Randomize.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
- : G4VUserPrimaryGeneratorAction()
+ : G4VUserPrimaryGeneratorAction(),
+   fMessenger(0),
+   fParticleGun(0),
+   fRandom(false)
 {
   G4int nofParticles = 1;
   fParticleGun = new G4ParticleGun(nofParticles);
@@ -52,12 +56,24 @@ B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
   // default particle kinematic
 
   G4ParticleDefinition* particleDefinition 
-    = G4ParticleTable::GetParticleTable()->FindParticle("proton");
+    = G4ParticleTable::GetParticleTable()->FindParticle("e-");
 
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  fParticleGun->SetParticleEnergy(3.0*GeV);
+  fParticleGun->SetParticleEnergy(1.0*MeV);
   fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
+
+  // Generic messenger
+  // Define /JUNO/primary commands using generic messenger class
+  fMessenger
+    = new G4GenericMessenger(this, "/JUNO/primary/", "Primary generator control");
+
+  // Define /JUNO/primary/setRandom command
+  fMessenger
+    ->DeclareProperty("setRandom",
+                      fRandom,
+                      "Activate/Inactivate random option");
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -71,27 +87,42 @@ B2PrimaryGeneratorAction::~B2PrimaryGeneratorAction()
 
 void B2PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-//  // This function is called at the begining of event
+    //  // This function is called at the begining of event
 
-//  // In order to avoid dependence of PrimaryGeneratorAction
-//  // on DetectorConstruction class we get world volume
-//  // from G4LogicalVolumeStore.
+    //  // In order to avoid dependence of PrimaryGeneratorAction
+    //  // on DetectorConstruction class we get world volume
+    //  // from G4LogicalVolumeStore.
 
-//  G4double worldZHalfLength = 0;
-//  G4LogicalVolume* worldLV
-//    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
-//  G4Box* worldBox = NULL;
-//  if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
-//  if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
-//  else  {
-//    G4cerr << "World volume of box not found." << G4endl;
-//    G4cerr << "Perhaps you have changed geometry." << G4endl;
-//    G4cerr << "The gun will be place in the center." << G4endl;
-//  }
+    //  G4double worldZHalfLength = 0;
+    //  G4LogicalVolume* worldLV
+    //    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
+    //  G4Box* worldBox = NULL;
+    //  if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
+    //  if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
+    //  else  {
+    //    G4cerr << "World volume of box not found." << G4endl;
+    //    G4cerr << "Perhaps you have changed geometry." << G4endl;
+    //    G4cerr << "The gun will be place in the center." << G4endl;
+    //  }
 
-//  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+    //  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+    //this function is called at the begining of ecah event
+    //
 
-  fParticleGun->GeneratePrimaryVertex(anEvent);
+    if ( fRandom ) {
+        // randomized direction
+        G4double dtheta = 180.*deg;
+        G4double dphi = 360*deg;
+        G4double theta = G4UniformRand()*dtheta;
+        G4double phi = G4UniformRand()*dphi;
+        fParticleGun->SetParticleMomentumDirection(
+                    G4ThreeVector(sin(theta)*sin(phi), sin(theta)*cos(phi), cos(theta)));
+        G4double theta_pol = G4UniformRand()*dtheta;
+        G4double phi_pol = G4UniformRand()*dphi;
+        fParticleGun->SetParticlePolarization(
+                    G4ThreeVector(sin(theta_pol)*sin(phi_pol), sin(theta_pol)*cos(phi_pol), cos(theta_pol)));
+    }
+    fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

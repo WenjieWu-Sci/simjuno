@@ -4,6 +4,8 @@
 #include <G4Material.hh>
 #include <G4Element.hh>
 
+class G4GenericMessenger;
+
 class LSExpDetectorConstructionMaterial {
     public:
         LSExpDetectorConstructionMaterial();
@@ -28,6 +30,9 @@ class LSExpDetectorConstructionMaterial {
         G4Material* Air;
         G4Material* Water;
         G4Material* BlackWater;
+
+        G4bool fTrueMaterial;
+        G4GenericMessenger* fMessenger;
 };
 
 #endif

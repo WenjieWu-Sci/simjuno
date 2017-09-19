@@ -19,7 +19,8 @@
 
 using namespace std;
 
-G4VPhysicalVolume* DetectorConstruction::Construct() {
+G4VPhysicalVolume* DetectorConstruction::Construct()
+{
     G4NistManager* nist = G4NistManager::Instance();
     LSExpDetectorConstructionMaterial* MatTable= new LSExpDetectorConstructionMaterial();
     G4Material* JUNOAir= MatTable->GetAir();
