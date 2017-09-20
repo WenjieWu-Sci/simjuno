@@ -8,7 +8,7 @@
 
 LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial()
     :fMessenger(0),
-     fTrueMaterial(true)
+     fTrueMaterial(false)
 {
     initialize();
     fMessenger
@@ -47,6 +47,13 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
         LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
         LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
         LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    }
+    else{
+        G4double No_absor[502];
+        for(G4int i=0;i<502;i++)
+            No_absor[i]=1000000.*m;
+        LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, No_absor, 502);
+        LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, No_absor, 11);
     }
     LSMPT->AddProperty("RINDEX",   GdLSRefIndexEnergy, GdLSRefIndex, 18);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
@@ -105,8 +112,14 @@ G4Material* LSExpDetectorConstructionMaterial::GetAcrylic() {
     Acrylic->AddElement(O, 0.31961);
 
     G4MaterialPropertiesTable* AcrylicMPT = new G4MaterialPropertiesTable();
-    AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicAbsLength, 9);
-    AcrylicMPT->AddProperty("RAYLEIGH", AcrylicRayEnergy, AcrylicRayLength, 11);
+    if(fTrueMaterial){
+        AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicAbsLength, 9);
+        AcrylicMPT->AddProperty("RAYLEIGH", AcrylicRayEnergy, AcrylicRayLength, 11);
+    }
+    else{
+        G4double AcrylicNo_absor[9]={1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m};
+        AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicNo_absor, 9);
+    }
     AcrylicMPT->AddProperty("RINDEX", AcrylicRefEnergy, AcrylicRefIndex, 18);
 
     Acrylic->SetMaterialPropertiesTable(AcrylicMPT);
@@ -158,6 +171,13 @@ G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     }
     if(fTrueMaterial)
         WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+    else{
+        G4double fWaterNo_absor[316];
+        for(G4int i=0;i<316;i++)
+            fWaterNo_absor[i]=1000000.*m;
+        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterNo_absor, 316);
+        WaterMPT->AddProperty("RAYLEIGH", fPP_Water_ABS, fWaterNo_absor, 316);
+    }
     //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
     Water->SetMaterialPropertiesTable(WaterMPT);
 
@@ -178,8 +198,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetBlackWater() {
     for (int j = 0; j < 316; ++j) {
         fWaterABSORPTION[j] = 1.*nm;
     }
-    if(fTrueMaterial)
-        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
     //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
     BlackWater->SetMaterialPropertiesTable(WaterMPT);
 
