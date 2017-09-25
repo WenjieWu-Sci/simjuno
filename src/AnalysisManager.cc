@@ -39,6 +39,13 @@ void AnalysisManager::bookEvtTree() {
     evt->Branch("Y_Det", Y_Det, "Y_Det[nDetected]/D");
     evt->Branch("Z_Det", Z_Det, "Z_Det[nDetected]/D");
     evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nDetected]/I");
+    evt->Branch("X_Init", X_Init, "X_Init[nDetected]/D");
+    evt->Branch("Y_Init", Y_Init, "Y_Init[nDetected]/D");
+    evt->Branch("Z_Init", Z_Init, "Z_Init[nDetected]/D");
+    evt->Branch("Px_Init", Px_Init, "Px_Init[nDetected]/D");
+    evt->Branch("Py_Init", Py_Init, "Py_Init[nDetected]/D");
+    evt->Branch("Pz_Init", Pz_Init, "Pz_Init[nDetected]/D");
+    evt->Branch("E_Init",E_Init,"E_init[nDetected]/D");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -71,6 +78,13 @@ void AnalysisManager::BeginOfEvent(const G4Event* event) {
         Y_Det[i] = 0.;
         Z_Det[i] = 0.;
         isCerenkov[i] = -1;
+        X_Init[i] = 0.;
+        Y_Init[i] = 0.;
+        Z_Init[i] = 0.;
+        Px_Init[i] = 0.;
+        Py_Init[i] = 0.;
+        Pz_Init[i] = 0.;
+        E_Init[i] = 0.;
     }
 }
 
@@ -162,6 +176,16 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     Y_Det[nDetected-1]=(*hit)->GetPosition().getY();
                     Z_Det[nDetected-1]=(*hit)->GetPosition().getZ();
                     isCerenkov[nDetected-1]=(*hit)->IsFromCerenkov();
+                    G4PrimaryVertex* primVertex = event->GetPrimaryVertex();
+                    G4PrimaryParticle* primPart = primVertex->GetPrimary();
+                    E_Init[nDetected-1] = primPart->GetTotalEnergy();
+
+                    X_Init[nDetected-1] = primVertex->GetX0();
+                    Y_Init[nDetected-1] = primVertex->GetY0();
+                    Z_Init[nDetected-1] = primVertex->GetZ0();
+                    Px_Init[nDetected-1] = primPart->GetMomentum().x();
+                    Py_Init[nDetected-1] = primPart->GetMomentum().y();
+                    Pz_Init[nDetected-1] = primPart->GetMomentum().z();
                 }
                 NumScatter=0;
             }

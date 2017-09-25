@@ -40,6 +40,14 @@ class AnalysisManager {
         G4double Y_Det[200000];
         G4double Z_Det[200000];
         G4int isCerenkov[200000];
+        G4double X_Init[200000];
+        G4double Y_Init[200000];
+        G4double Z_Init[200000];
+        G4double Px_Init[200000];
+        G4double Py_Init[200000];
+        G4double Pz_Init[200000];
+        G4double E_Init[200000];
+
 
     private:
         G4int fLSETId {-1};
