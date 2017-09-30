@@ -29,6 +29,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+    /*
     G4double x0= 20 * cm;
     G4double y0= 0.;
     G4double z0= 0.;
@@ -47,5 +48,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4double poly= TMath::Sin(theta)*TMath::Sin(phi);
     G4double polz= TMath::Cos(theta);
     fGPS->SetParticlePolarization(G4ThreeVector(polx, poly, polz));
+    */
     fGPS->GeneratePrimaryVertex(anEvent);
 }
