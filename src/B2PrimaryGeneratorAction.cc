@@ -63,6 +63,11 @@ B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   fParticleGun->SetParticleEnergy(1.0*MeV);
   fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
+  G4ThreeVector dir_init = G4ThreeVector(0.,0.,1.);
+  G4ThreeVector pol_init = G4ThreeVector(1.,0.,0.);
+  G4double d_rot = G4UniformRand()*180.*deg;
+  G4ThreeVector pol_final = pol_init.rotate(dir_init, d_rot);
+  fParticleGun->SetParticlePolarization(pol_final);
 
   // Generic messenger
   // Define /JUNO/primary commands using generic messenger class

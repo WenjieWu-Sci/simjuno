@@ -80,7 +80,8 @@ LSExpPhysicsList::LSExpPhysicsList() : G4VModularPhysicsList()
     cutForPositron  = 0.1*mm;
 
 
-    SetVerboseLevel(1);
+    //SetVerboseLevel(1);
+    SetVerboseLevel(0);
 
     // default physics
 //    electroNuList = new DsPhysConsElectroNu();

@@ -88,8 +88,8 @@ void EnergyTimeSD::Initialize(G4HCofThisEvent* hcof) {
 }
 
 void EnergyTimeSD::EndOfEvent(G4HCofThisEvent *){
-    G4cout << "\n-------->" <<  fHitsCollection->GetName()
-           << ": in this event: " << G4endl;
+    //G4cout << "\n-------->" <<  fHitsCollection->GetName()
+    //      << ": in this event: " << G4endl;
 
     //    G4int nofHits = fHitsCollection->entries();
     //    for ( G4int i=0; i<nofHits; i++ ) (*fHitsCollection)[i]->Print();

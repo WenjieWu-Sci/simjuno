@@ -174,4 +174,5 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
             }
         }
     }
+    evt->Fill();
 }
