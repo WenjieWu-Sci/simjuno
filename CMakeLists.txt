@@ -18,7 +18,7 @@ include_directories(${ROOT_INCLUDE_DIR} ${Geant4_INCLUDE_DIR} ${PROJECT_SOURCE_D
 
 # We presume the existence of three directories
 file(GLOB_RECURSE sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB_RECURSE headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+file(GLOB_RECURSE headers ${PROJECT_SOURCE_DIR}/include/*.hh ${PROJECT_SOURCE_DIR}/include/*.h)
 file(GLOB_RECURSE macros RELATIVE ${PROJECT_SOURCE_DIR} macros/*.mac)
 
 # Enable macros for out-of-source build

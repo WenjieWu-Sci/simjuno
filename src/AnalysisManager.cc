@@ -19,6 +19,8 @@ AnalysisManager* AnalysisManager::GetInstance() {
 
 AnalysisManager::AnalysisManager() {
     evt= 0;
+    messenger= new AnalysisManagerMessenger(this);
+    m_filename= "test.root";
 }
 
 AnalysisManager::~AnalysisManager() {;}
@@ -27,25 +29,23 @@ void AnalysisManager::bookEvtTree() {
     evt= new TTree("evt", "evtTreeInfo");
     evt->Branch("EventID", &evtID, "EventID/I");
     evt->Branch("nPhotons", &nPhotons, "nPhotons/I");
-    evt->Branch("nScintillation", &nScintillation, "nScintillation/I");
-    evt->Branch("nCerenkov", &nCerenkov, "nCerenkov/I");
-    evt->Branch("nStraight", &nStraight, "nStraight/I");
-    evt->Branch("TimeStraight", TimeStraight, "TimeStraight[nStraight]/D");
-    evt->Branch("nDetected",&nDetected,"nDetected/I");
-    evt->Branch("nRayleigh", nRayleigh, "nRayleigh[nDetected]/I");
-    evt->Branch("TID_Det",TID_Det,"TID_Det[nDetected]/I");
-    evt->Branch("Time_Det", Time_Det, "Time_Det[nDetected]/D");
-    evt->Branch("X_Det", X_Det, "X_Det[nDetected]/D");
-    evt->Branch("Y_Det", Y_Det, "Y_Det[nDetected]/D");
-    evt->Branch("Z_Det", Z_Det, "Z_Det[nDetected]/D");
-    evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nDetected]/I");
-    evt->Branch("X_Init", X_Init, "X_Init[nDetected]/D");
-    evt->Branch("Y_Init", Y_Init, "Y_Init[nDetected]/D");
-    evt->Branch("Z_Init", Z_Init, "Z_Init[nDetected]/D");
-    evt->Branch("Px_Init", Px_Init, "Px_Init[nDetected]/D");
-    evt->Branch("Py_Init", Py_Init, "Py_Init[nDetected]/D");
-    evt->Branch("Pz_Init", Pz_Init, "Pz_Init[nDetected]/D");
-    evt->Branch("E_Init",E_Init,"E_init[nDetected]/D");
+    evt->Branch("nRayleigh", nRayleigh, "nRayleigh[nPhotons]/I");
+    evt->Branch("TID_Det",TID_Det,"TID_Det[nPhotons]/I");
+    evt->Branch("Time_Det", Time_Det, "Time_Det[nPhotons]/D");
+    evt->Branch("X_Det", X_Det, "X_Det[nPhotons]/D");
+    evt->Branch("Y_Det", Y_Det, "Y_Det[nPhotons]/D");
+    evt->Branch("Z_Det", Z_Det, "Z_Det[nPhotons]/D");
+    evt->Branch("isCerenkov", isCerenkov, "isCerenkov[nPhotons]/I");
+    evt->Branch("isScintillation", isScintillation, "isScintillation[nPhotons]/I");
+    evt->Branch("isReemission", isReemission, "isReemission[nPhotons]/I");
+    evt->Branch("X_Init", X_Init, "X_Init[nPhotons]/D");
+    evt->Branch("Y_Init", Y_Init, "Y_Init[nPhotons]/D");
+    evt->Branch("Z_Init", Z_Init, "Z_Init[nPhotons]/D");
+    evt->Branch("Px_Init", Px_Init, "Px_Init[nPhotons]/D");
+    evt->Branch("Py_Init", Py_Init, "Py_Init[nPhotons]/D");
+    evt->Branch("Pz_Init", Pz_Init, "Pz_Init[nPhotons]/D");
+    evt->Branch("E_Init",E_Init,"E_init[nPhotons]/D");
+    evt->Branch("PID", PID, "PID[nPhotons]/I");
 }
 
 void AnalysisManager::BeginOfRun() {
@@ -53,7 +53,7 @@ void AnalysisManager::BeginOfRun() {
     if (thefile) {
         delete thefile;
     }
-    thefile= new TFile("simjunotest.root", "RECREATE");
+    thefile= new TFile(m_filename, "RECREATE");
     bookEvtTree();
 }
 
@@ -65,19 +65,13 @@ void AnalysisManager::EndOfRun() {
 void AnalysisManager::BeginOfEvent(const G4Event* event) {
     evtID = event->GetEventID();
     nPhotons= 0;
-    nScintillation= 0;
-    nCerenkov= 0;
-    nStraight= 0;
-    nDetected =0;
     for (G4int i= 0; i< 200000; ++i) {
-        TimeStraight[i]= 0;
         nRayleigh[i] =0;
         TID_Det[i] = -1;
         Time_Det[i] = 0.;
         X_Det[i] = 0.;
         Y_Det[i] = 0.;
         Z_Det[i] = 0.;
-        isCerenkov[i] = -1;
         X_Init[i] = 0.;
         Y_Init[i] = 0.;
         Z_Init[i] = 0.;
@@ -85,15 +79,18 @@ void AnalysisManager::BeginOfEvent(const G4Event* event) {
         Py_Init[i] = 0.;
         Pz_Init[i] = 0.;
         E_Init[i] = 0.;
+        PID[i]= -1;
+        isCerenkov[i] = -1;
+        isScintillation[i]= -1;
+        isReemission[i]= -1;
     }
 }
 
 void AnalysisManager::EndOfEvent(const G4Event* event) {
-    G4int NumScatter(0);
     G4SDManager* sdm = G4SDManager::GetSDMpointer();
 
     // Get the hit collections
-    G4HCofThisEvent* hcofEvent = event->GetHCofThisEvent(); 
+    G4HCofThisEvent* hcofEvent = event->GetHCofThisEvent();
 
     // If there is no hit collection, there is nothing to be done
     if(!hcofEvent) return;
@@ -110,15 +107,9 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         fWaterETId= sdm->GetCollectionID("WaterET/energy_time");
         G4cout << "EventAction: Water tank energy_time scorer ID: " << fWaterETId << G4endl;
     }
-    if(fDetectorETId < 0) {
-        fDetectorETId = sdm->GetCollectionID("IdealDetector/energy_time");
-        G4cout << "EventAction: Ideal Detector energy_time scorer ID: " << fDetectorETId << G4endl;
-    }
 
     // Hit collections IDs to be looped over ("Don't Repeat Yourself" principle)
-    std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId, fDetectorETId };
-    std::vector<G4int> OPTID;
-//    std::vector<G4int> OPTID_Det;
+    std::vector<G4int> hitCollectionIds= { fLSETId, fAcrylicETId, fWaterETId };
     for (std::vector<G4int>::iterator collectionId = hitCollectionIds.begin();
          collectionId != hitCollectionIds.end(); ++collectionId) {
         if (*collectionId == -1) continue;
@@ -126,71 +117,61 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
         EnergyTimeHitsCollection* hitCollection= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*collectionId));
         if (!hitCollection) continue;
 
+        // Branch: nPhotons, HitTime, isScintillation, isCerenkov, isReemission
+        // Branch: ProcessStatus, nRayScattering
         std::vector<EnergyTimeHit*> tmp_hitCol = *hitCollection->GetVector();
         for (std::vector<EnergyTimeHit*>::iterator hit = tmp_hitCol.begin();
              hit != tmp_hitCol.end(); ++hit) {
-            nScintillation+= ((*hit))->IsScintillation();
-            nCerenkov+= (*hit)->IsCerenkov();
-            nPhotons+= (*hit)->IsOpticalPhoton();
-            if ((*hit)->GetOPTID()> 0) {
-                OPTID.push_back((*hit)->GetOPTID());
-            }
-            //G4bool IsNew = (std::find(OPTID_Det.begin(),OPTID_Det.end(),(*hit)->GetTID())==OPTID_Det.end());
-            //G4cout << "Track " << (*hit)->GetTID() << " IsNew is " << IsNew <<" StepNo " << (*hit)->GetStepNo() << " Volume " << *collectionId <<" " << (*hit)->GetPosVolume() << G4endl;
-            // find the existence of the track id
-            if ((*hit)->GetPosVolume() == "Detector" && (*hit)->GetProcessName() == "OpAbsorption") {
-//                if ((*hit)->GetParticleID()==0){
-//                    OPTID_Det.push_back((*hit)->GetTID());
-//                }
-                nDetected+= ((*hit)->GetParticleID()==0?1:0);
-                G4bool TagStraight= true;
-                for (std::vector<G4int>::iterator id = hitCollectionIds.begin();
-                     id != hitCollectionIds.end(); ++id) {
-                    EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*id));
-
-                    std::vector<EnergyTimeHit*> tmp_hitCol_cmp = *hitCol->GetVector();
-                    for (std::vector<EnergyTimeHit*>::iterator hitprime = tmp_hitCol_cmp.begin();
-                         hitprime != tmp_hitCol_cmp.end(); ++hitprime) {
-                        if ((*hitprime)->GetTID() == (*hit)->GetTID()) {
-                            if ((*hitprime)->GetProcessName() == "OpRayleigh") {
-                                TagStraight= false;
-                                NumScatter++;
-                                //break;
+            if ((*hit)->GetParticle()==20022 && (*hit)->GetBoundaryProcess() && (*hit)->GetTrackStatus()==2 &&
+                    (*hit)->GetBoundaryProcessStatus()==10 && (*hit)->GetProcessName()=="Transportation") {
+                G4int tmp_nRayScattering= 0;
+                nPhotons++;
+                if(nPhotons > 0){
+                    X_Det[nPhotons-1]= (*hit)->GetPostPosition().getX();
+                    Y_Det[nPhotons-1]= (*hit)->GetPostPosition().getY();
+                    Z_Det[nPhotons-1]= (*hit)->GetPostPosition().getZ();
+                    Time_Det[nPhotons-1]= (*hit)->GetPostStepTime();
+                    PID[nPhotons-1]= (*hit)->GetPID();
+                    TID_Det[nPhotons-1]= (*hit)->GetTID();
+                    for (std::vector<G4int>::iterator id = hitCollectionIds.begin();
+                         id != hitCollectionIds.end(); ++id) {
+                        EnergyTimeHitsCollection* hitCol= dynamic_cast<EnergyTimeHitsCollection*>(hcofEvent->GetHC(*id));
+                        std::vector<EnergyTimeHit*> tmp_hitCol_cmp = *hitCol->GetVector();
+                        for (std::vector<EnergyTimeHit*>::iterator hitprime = tmp_hitCol_cmp.begin();
+                             hitprime != tmp_hitCol_cmp.end(); ++hitprime) {
+                            // select the same particle using TID
+                            if ((*hitprime)->GetTID() == (*hit)->GetTID()) {
+                                if ((*hitprime)->GetProcessName()=="OpRayleigh") {
+                                    tmp_nRayScattering++;
+                                }
+                                // select the first step to get their creator process
+                                if ((*hitprime)->GetStepNo() == 1) {
+                                    if ((*hitprime)->GetCreatorProcess()=="Scintillation") {
+                                        isScintillation[nPhotons-1]= 1;
+                                    }
+                                    if ((*hitprime)->GetCreatorProcess()=="Cerenkov") {
+                                        isCerenkov[nPhotons-1]= 1;
+                                    }
+                                    if ((*hitprime)->GetCreatorProcess()=="OpWLS") {
+                                        isReemission[nPhotons-1]= 1;
+                                    }
+                                }
                             }
                         }
                     }
-                    //if (!TagStraight)
-                    //    break;
-                }
-                if (TagStraight){
-                    nStraight++;
-                    if(nStraight>0)
-                        TimeStraight[nStraight-1]=(*hit)->GetTime();
-                }
-                //G4cout << "Num of scattering for " << (*hit)->GetTID() << " is " << NumScatter << G4endl;
-                if(nDetected>0) {
-                    TID_Det[nDetected-1]=(*hit)->GetTID();
-                    nRayleigh[nDetected-1]=NumScatter;
-                    Time_Det[nDetected-1]=(*hit)->GetTime();
-                    X_Det[nDetected-1]=(*hit)->GetPosition().getX();
-                    Y_Det[nDetected-1]=(*hit)->GetPosition().getY();
-                    Z_Det[nDetected-1]=(*hit)->GetPosition().getZ();
-                    isCerenkov[nDetected-1]=(*hit)->IsFromCerenkov();
+                    nRayleigh[nPhotons-1]= tmp_nRayScattering;
                     G4PrimaryVertex* primVertex = event->GetPrimaryVertex();
                     G4PrimaryParticle* primPart = primVertex->GetPrimary();
-                    E_Init[nDetected-1] = primPart->GetTotalEnergy();
+                    E_Init[nPhotons-1] = primPart->GetTotalEnergy();
 
-                    X_Init[nDetected-1] = primVertex->GetX0();
-                    Y_Init[nDetected-1] = primVertex->GetY0();
-                    Z_Init[nDetected-1] = primVertex->GetZ0();
-                    Px_Init[nDetected-1] = primPart->GetMomentum().x();
-                    Py_Init[nDetected-1] = primPart->GetMomentum().y();
-                    Pz_Init[nDetected-1] = primPart->GetMomentum().z();
+                    X_Init[nPhotons-1] = primVertex->GetX0();
+                    Y_Init[nPhotons-1] = primVertex->GetY0();
+                    Z_Init[nPhotons-1] = primVertex->GetZ0();
+                    Px_Init[nPhotons-1] = primPart->GetMomentum().x();
+                    Py_Init[nPhotons-1] = primPart->GetMomentum().y();
+                    Pz_Init[nPhotons-1] = primPart->GetMomentum().z();
                 }
-                NumScatter=0;
             }
         }
     }
-
-    evt->Fill();
 }

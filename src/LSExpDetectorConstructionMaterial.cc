@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Material database
+ * GetLS(): LS
+ * GetAcrylic(): Acrylic
+ * GetAir(): Air
+ * GetWater(): Water
+*******************************************************************************/
+
 #include "LSExpDetectorConstructionMaterial.hh"
 #include "OpticalProperty.icc"
 
@@ -6,30 +14,23 @@
 #include <G4MaterialPropertiesTable.hh>
 #include "G4GenericMessenger.hh"
 
-LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial()
-    :fMessenger(0),
-     fTrueMaterial(false)
-{
+LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial() {
     initialize();
-    fMessenger
-            =new G4GenericMessenger(this, "/JUNO/det/","detecter");
-    fMessenger
-            ->DeclareProperty("setTrueMaterial",
-                              fTrueMaterial,
-                              "Enable True Material")
-            .SetStates(G4State_PreInit,G4State_Init,G4State_Idle);
 }
 
 LSExpDetectorConstructionMaterial::~LSExpDetectorConstructionMaterial() {
 }
 
 void LSExpDetectorConstructionMaterial::initialize() {
-    C = new G4Element("Carbon", "C" , 6., 12.01*g/mole); 
-    H = new G4Element("Hydrogen", "H" , 1., 1.01*g/mole);
-    O = new G4Element("Oxygen", "O", 8., 16.00*g/mole); 
-    N = new G4Element("Nitrogen", "N", 7., 14.01*g/mole);
-    S = new G4Element("Sulfur", "S", 16., 32.066*g/mole);
-    Ar = new G4Element("Argon", "Ar", 18, 39.948*g/mole);
+    C= new G4Element("Carbon", "C" , 6., 12.01*g/mole); 
+    H= new G4Element("Hydrogen", "H" , 1., 1.01*g/mole);
+    O= new G4Element("Oxygen", "O", 8., 16.00*g/mole); 
+    N= new G4Element("Nitrogen", "N", 7., 14.01*g/mole);
+    S= new G4Element("Sulfur", "S", 16., 32.066*g/mole);
+    Ar= new G4Element("Argon", "Ar", 18, 39.948*g/mole);
+    Fe= new G4Element("Iron", "Fe", 26., 55.845*g/mole);
+    Cr= new G4Element("Chromium", "Cr", 24., 55.9961*g/mole);
+    Ni= new G4Element("Nickel", "Ni", 28., 58.6934*g/mole);
 }
 
 G4Material* LSExpDetectorConstructionMaterial::GetLS() {
@@ -42,25 +43,26 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     LS->AddElement(S,  0.00005);
 
     G4MaterialPropertiesTable* LSMPT = new G4MaterialPropertiesTable();
-
-    if(fTrueMaterial){
-        LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-        LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
-        LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    }
-    else{
-        G4double No_absor[502];
-        for(G4int i=0;i<502;i++)
-            No_absor[i]=1000000.*m;
-        LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, No_absor, 502);
-        LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, No_absor, 11);
-    }
     LSMPT->AddProperty("RINDEX",   GdLSRefIndexEnergy, GdLSRefIndex, 18);
+    LSMPT->AddProperty("RINDEX", GdLSRefIndexEnergy, GdLSRefIndex, 18);
+    LSMPT->AddProperty("ABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
     LSMPT->AddProperty("FASTCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
     LSMPT->AddProperty("SLOWCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddProperty("REEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
     LSMPT->AddConstProperty("SCINTILLATIONYIELD", 11522/MeV);
     LSMPT->AddConstProperty("RESOLUTIONSCALE", 1.);
+    //LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
+    //LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
+    LSMPT->AddConstProperty("FASTTIMECONSTANT", 0.0*ns);
+    LSMPT->AddConstProperty("SLOWTIMECONSTANT", 0.0*ns);
     LSMPT->AddConstProperty("YIELDRATIO", 1.);
+//    LSMPT->AddProperty("RAYLENGTH", GdLSRayEnergy, GdLSRayLength, 11);
+    LSMPT->AddProperty("RAYLEIGH", GdLSRayEnergy, GdLSRayLength, 11);
+
+//    LSMPT->AddProperty("WLSABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+//    LSMPT->AddProperty("WLSCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+//    LSMPT->AddConstProperty("WLSTIMECONSTANT", 4.93*ns);
+
     LSMPT->AddConstProperty("FASTTIMECONSTANT", 4.93*ns);
     LSMPT->AddConstProperty("SLOWTIMECONSTANT", 20.6*ns);
     // add fast/slow time constant for reemission
@@ -89,15 +91,15 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
     //     + XXXCOMPONENT, maybe FAST/SLOW
     //     + XXXTIMECONSTANT, maybe FAST/SLOW
     //   XXX in [PPO, bisMSB, LAB]
-    //LSMPT->AddProperty("PPOABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    //LSMPT->AddProperty("PPOREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    //LSMPT->AddProperty("PPOCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    //LSMPT->AddProperty("PPOTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
+    LSMPT->AddProperty("PPOABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("PPOREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    LSMPT->AddProperty("PPOCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddProperty("PPOTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
 
-    //LSMPT->AddProperty("bisMSBABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
-    //LSMPT->AddProperty("bisMSBREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
-    //LSMPT->AddProperty("bisMSBCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
-    //LSMPT->AddProperty("bisMSBTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
+    LSMPT->AddProperty("bisMSBABSLENGTH", GdLSABSEnergy, GdLSABSLength, 502);
+    LSMPT->AddProperty("bisMSBREEMISSIONPROB", GdLSReemEnergy, GdLSReem, 28);
+    LSMPT->AddProperty("bisMSBCOMPONENT", GdLSComEnergy, GdLSFastComponent, 275);
+    LSMPT->AddProperty("bisMSBTIMECONSTANT", component, GdLSReemissionFastTimeConstant,2);
 
     LS->SetMaterialPropertiesTable(LSMPT);
 
@@ -106,20 +108,14 @@ G4Material* LSExpDetectorConstructionMaterial::GetLS() {
 
 G4Material* LSExpDetectorConstructionMaterial::GetAcrylic() {
     // Acrylic
-    Acrylic = new G4Material("Acrylic", 1.18*g/cm3, 3);
+    Acrylic= new G4Material("Acrylic", 1.18*g/cm3, 3);
     Acrylic->AddElement(C, 0.59984);
     Acrylic->AddElement(H, 0.08055);
     Acrylic->AddElement(O, 0.31961);
 
     G4MaterialPropertiesTable* AcrylicMPT = new G4MaterialPropertiesTable();
-    if(fTrueMaterial){
-        AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicAbsLength, 9);
-        AcrylicMPT->AddProperty("RAYLEIGH", AcrylicRayEnergy, AcrylicRayLength, 11);
-    }
-    else{
-        G4double AcrylicNo_absor[9]={1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m,1000.*m};
-        AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicNo_absor, 9);
-    }
+    AcrylicMPT->AddProperty("ABSLENGTH", AcrylicAbsEnergy, AcrylicAbsLength, 9);
+    AcrylicMPT->AddProperty("RAYLEIGH", AcrylicRayEnergy, AcrylicRayLength, 11);
     AcrylicMPT->AddProperty("RINDEX", AcrylicRefEnergy, AcrylicRefIndex, 18);
 
     Acrylic->SetMaterialPropertiesTable(AcrylicMPT);
@@ -130,7 +126,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetAcrylic() {
 G4Material* LSExpDetectorConstructionMaterial::GetAir() {
     // Air
     G4double density = 1.205e-3*g/cm3;
-    Air = new G4Material("Air", density, 4);
+    Air= new G4Material("Air", density, 4);
     Air->AddElement(N, 0.7550);
     Air->AddElement(O, 0.2321);
     Air->AddElement(Ar, 0.0128);
@@ -158,7 +154,7 @@ G4Material* LSExpDetectorConstructionMaterial::GetAir() {
 G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     // Water
     G4double density= 1.000*g/cm3;
-    Water = new G4Material("Water", density, 2);
+    Water= new G4Material("Water", density, 2);
     Water->AddElement(H,2);
     Water->AddElement(O,1);
     G4MaterialPropertiesTable* WaterMPT = new G4MaterialPropertiesTable();
@@ -169,38 +165,44 @@ G4Material* LSExpDetectorConstructionMaterial::GetWater() {
     for (int j = 0; j < 316; ++j) {
         fWaterABSORPTION[j] *= water_abslen_scale_factor;
     }
-    if(fTrueMaterial)
-        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
-    else{
-        G4double fWaterNo_absor[316];
-        for(G4int i=0;i<316;i++)
-            fWaterNo_absor[i]=1000000.*m;
-        WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterNo_absor, 316);
-        WaterMPT->AddProperty("RAYLEIGH", fPP_Water_ABS, fWaterNo_absor, 316);
-    }
+    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
     //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
     Water->SetMaterialPropertiesTable(WaterMPT);
 
     return Water;
 }
 
-G4Material* LSExpDetectorConstructionMaterial::GetBlackWater() {
-    // Water
-    G4double density= 1.000*g/cm3;
-    BlackWater = new G4Material("BlackWater", density, 2);
-    BlackWater->AddElement(H,2);
-    BlackWater->AddElement(O,1);
-    G4MaterialPropertiesTable* WaterMPT = new G4MaterialPropertiesTable();
-    WaterMPT->AddProperty("RINDEX", fPP_Water_RIN, fWaterRINDEX,36);
-    //WaterMPT->AddProperty("RINDEX", fPP_Oil_RIN, fOilRINDEX, 9);
-    // scale the water absorption length
-    //double water_abslen_scale_factor = 90.*m/(2651.815*cm);
-    for (int j = 0; j < 316; ++j) {
-        fWaterABSORPTION[j] = 1.*nm;
-    }
-    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
-    //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
-    BlackWater->SetMaterialPropertiesTable(WaterMPT);
+//G4Material* LSExpDetectorConstructionMaterial::GetBlackWater() {
+//    // Water
+//    G4double density= 1.000*g/cm3;
+//    BlackWater = new G4Material("BlackWater", density, 2);
+//    BlackWater->AddElement(H,2);
+//    BlackWater->AddElement(O,1);
+//    G4MaterialPropertiesTable* WaterMPT = new G4MaterialPropertiesTable();
+//    WaterMPT->AddProperty("RINDEX", fPP_Water_RIN, fWaterRINDEX,36);
+//    //WaterMPT->AddProperty("RINDEX", fPP_Oil_RIN, fOilRINDEX, 9);
+//    // scale the water absorption length
+//    //double water_abslen_scale_factor = 90.*m/(2651.815*cm);
+//    for (int j = 0; j < 316; ++j) {
+//        fWaterABSORPTION[j] = 1.*nm;
+//    }
+//    WaterMPT->AddProperty("ABSLENGTH", fPP_Water_ABS,fWaterABSORPTION, 316);
+//    //WaterMPT->AddProperty("ABSLENGTH",fPP_Oil_ABS, fOilABSORPTION, 543);
+//    BlackWater->SetMaterialPropertiesTable(WaterMPT);
 
-    return BlackWater;
-}
+//    return BlackWater;
+//}
+
+//G4Material* LSExpDetectorConstructionMaterial::GetStainlessSteel() {
+//    // StainlessSteel
+//    G4double density= 7.8*g/cm3;
+//    StainlessSteel= new G4Material("StainlessSteel", density, 3);
+//    StainlessSteel->AddElement(Fe, 0.74);
+//    StainlessSteel->AddElement(Cr, 0.08);
+//    StainlessSteel->AddElement(Ni, 0.18);
+//    G4MaterialPropertiesTable* StainlessSteelMPT= new G4MaterialPropertiesTable();
+//    StainlessSteelMPT->AddProperty("ABSLENGTH", fPP_SteelTank, fSteelTankABSORPTION, 4);
+//    StainlessSteel->SetMaterialPropertiesTable(StainlessSteelMPT);
+
+//    return StainlessSteel;
+//}

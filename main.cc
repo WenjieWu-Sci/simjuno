@@ -23,16 +23,8 @@
 
 #include "ActionInitialization.hh"
 
-// Task 1: See that we need to include the proper header
 #include "DetectorConstruction.hh"
-#include "PhysicsList.hh"
-
-// Task 3b.4: Include (temporarily if you want) header for QGSP
-#include "QGSP_BERT.hh"
-
-// Task 4b.1: Include the proper header to enable scoring manager
-#include "G4ScoringManager.hh"
-
+#include "LSExpPhysicsList.hh"
 #include "AnalysisManager.hh"
 
 using namespace std;
@@ -51,22 +43,15 @@ int main(int argc, char** argv)
     bool interactive = false;
 
     // Parse command line arguments
-    if  (argc == 1)
-    {
+    if  (argc == 1) {
         interactive = true;
-    }
-    else
-    {
-        for (int i = 1; i < argc; i++)
-        {
+    } else {
+        for (int i = 1; i < argc; i++) {
             G4String arg = argv[i];
-            if (arg == "-i" || arg == "--interactive")
-            {
+            if (arg == "-i" || arg == "--interactive") {
                 interactive = true;
                 continue;
-            }
-            else
-            {
+            } else {
                 macros.push_back(arg);
             }
         }
@@ -82,11 +67,8 @@ int main(int argc, char** argv)
         visManager->Initialize();
     #endif
 
-    // Task 3b.4: Replace (only temporarily) PhysicsList with QGSP
-    runManager->SetUserInitialization(new PhysicsList());
-    //runManager->SetUserInitialization(new QGSP_BERT());
+    runManager->SetUserInitialization(new LSExpPhysicsList());
 
-    // Task 1: See that we instantiate the detector construction here
     runManager->SetUserInitialization(new DetectorConstruction());
     runManager->SetUserInitialization(new ActionInitialization());
 
@@ -99,9 +81,6 @@ int main(int argc, char** argv)
     #endif
 
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
-
-    // Task 4b.1: You need to access the scoring manager here (or above)
-    G4ScoringManager::GetScoringManager();
 
     for (std::vector<G4String>::iterator it=macros.begin();\
          it != macros.end(); ++it)

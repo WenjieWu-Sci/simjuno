@@ -1,0 +1,7 @@
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/install/strip.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/install/local.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/install.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/list_install_components.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/rebuild_cache.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/edit_cache.dir
+/home/wuwj/workdir/G410code/geant4/simjuno/CMakeFiles/simjuno.dir

@@ -39,6 +39,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4GenericMessenger.hh"
+#include "TMath.h"
 
 #include "Randomize.hh"
 
@@ -87,40 +88,21 @@ B2PrimaryGeneratorAction::~B2PrimaryGeneratorAction()
 
 void B2PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-    //  // This function is called at the begining of event
-
-    //  // In order to avoid dependence of PrimaryGeneratorAction
-    //  // on DetectorConstruction class we get world volume
-    //  // from G4LogicalVolumeStore.
-
-    //  G4double worldZHalfLength = 0;
-    //  G4LogicalVolume* worldLV
-    //    = G4LogicalVolumeStore::GetInstance()->GetVolume("world");
-    //  G4Box* worldBox = NULL;
-    //  if ( worldLV ) worldBox = dynamic_cast<G4Box*>(worldLV->GetSolid());
-    //  if ( worldBox ) worldZHalfLength = worldBox->GetZHalfLength();
-    //  else  {
-    //    G4cerr << "World volume of box not found." << G4endl;
-    //    G4cerr << "Perhaps you have changed geometry." << G4endl;
-    //    G4cerr << "The gun will be place in the center." << G4endl;
-    //  }
-
-    //  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
-    //this function is called at the begining of ecah event
-    //
-
     if ( fRandom ) {
         // randomized direction
         G4double dtheta = 180.*deg;
         G4double dphi = 360*deg;
-        G4double theta = G4UniformRand()*dtheta;
+        G4double costheta = G4UniformRand()*2-1.;
+        G4double theta = TMath::ACos(costheta);
         G4double phi = G4UniformRand()*dphi;
-        fParticleGun->SetParticleMomentumDirection(
-                    G4ThreeVector(sin(theta)*sin(phi), sin(theta)*cos(phi), cos(theta)));
-        G4double theta_pol = G4UniformRand()*dtheta;
-        G4double phi_pol = G4UniformRand()*dphi;
-        fParticleGun->SetParticlePolarization(
-                    G4ThreeVector(sin(theta_pol)*sin(phi_pol), sin(theta_pol)*cos(phi_pol), cos(theta_pol)));
+        G4ThreeVector dir_k = G4ThreeVector(sin(theta)*sin(phi), sin(theta)*cos(phi), cos(theta));
+        fParticleGun->SetParticleMomentumDirection(dir_k);
+        // get a vector perpendicular to dir
+        G4ThreeVector tmp_pol = G4ThreeVector(sin(theta+90.*deg)*sin(phi), sin(theta+90.*deg)*cos(phi), cos(theta+90.*deg));
+        // rotate randomly between 0 to 180 deg
+        G4double pol_random = G4UniformRand()*dtheta;
+        G4ThreeVector pol = tmp_pol.rotate(dir_k, pol_random);
+        fParticleGun->SetParticlePolarization(pol);
     }
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

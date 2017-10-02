@@ -7,6 +7,8 @@
 #include <Randomize.hh>
 #include <G4GeneralParticleSource.hh>
 
+#include <TMath.h>
+
 using namespace std;
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
@@ -37,5 +39,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     y0 += dy0*(G4UniformRand()-0.5);
     z0 += dz0*(G4UniformRand()-0.5);
     fGPS->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+
+    G4double cos_theta= 2*G4UniformRand() - 1;
+    G4double phi= 2*TMath::Pi()*G4UniformRand();
+    G4double theta= TMath::ACos(cos_theta);
+    G4double polx= TMath::Sin(theta)*TMath::Cos(phi);
+    G4double poly= TMath::Sin(theta)*TMath::Sin(phi);
+    G4double polz= TMath::Cos(theta);
+    fGPS->SetParticlePolarization(G4ThreeVector(polx, poly, polz));
     fGPS->GeneratePrimaryVertex(anEvent);
 }

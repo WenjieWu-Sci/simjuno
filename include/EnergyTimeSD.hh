@@ -2,6 +2,8 @@
 #define ENERGYTIMESD_HH
 
 #include <G4VSensitiveDetector.hh>
+#include "G4OpBoundaryProcess.hh"
+#include "G4OpRayleigh.hh"
 
 #include "EnergyTimeHit.hh"
 

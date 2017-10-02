@@ -11,7 +11,7 @@
 
 using namespace std;
 
-EventAction::EventAction() : 
+EventAction::EventAction() :
     G4UserEventAction(),
     fNOPs("NOPs", 0),
     fNCerenkovOPs("NCerenkovOPs", 0),
@@ -39,15 +39,15 @@ void EventAction::EndOfEventAction(const G4Event* event) {
 
     //G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
     //accumulableManager->Merge();
-    if (fNOPs.GetValue()) 
+    if (fNOPs.GetValue())
         G4cout << " * Produced " << fNOPs.GetValue() << " optical photons." << G4endl;
     else
         G4cout << " * No optical photons produced" << G4endl;
-    if (fNCerenkovOPs.GetValue()) 
+    if (fNCerenkovOPs.GetValue())
         G4cout << " * Produced " << fNCerenkovOPs.GetValue() << " cerenkov optical photons." << G4endl;
     else
         G4cout << " * No cerenkov optical photons produced" << G4endl;
-    if (fNScintillatorOPs.GetValue()) 
+    if (fNScintillatorOPs.GetValue())
         G4cout << " * Produced " << fNScintillatorOPs.GetValue() << " scintillator optical photons." << G4endl;
     else
         G4cout << " * No scinscintillator optical photons produced" << G4endl;
@@ -67,4 +67,3 @@ void EventAction::AddCerenkovOP() {
 void EventAction::AddScintillatorOP() {
     fNScintillatorOPs+= 1;
 }
-
