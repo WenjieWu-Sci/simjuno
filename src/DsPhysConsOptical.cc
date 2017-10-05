@@ -45,7 +45,7 @@ DsPhysConsOptical::DsPhysConsOptical(const G4String& name): G4VPhysicsConstructo
     m_cerenMaxPhotonPerStep = 300;
 
     //m_doReemission = true;
-    m_doReemission = true;
+    m_doReemission = false;
     m_doScintAndCeren = true;
     m_doReemissionOnly = false;
 
