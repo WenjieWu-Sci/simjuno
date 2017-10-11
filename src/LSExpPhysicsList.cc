@@ -81,7 +81,7 @@ LSExpPhysicsList::LSExpPhysicsList() : G4VModularPhysicsList()
 
 
     //SetVerboseLevel(1);
-    SetVerboseLevel(0);
+    SetVerboseLevel(1);
 
     // default physics
 //    electroNuList = new DsPhysConsElectroNu();

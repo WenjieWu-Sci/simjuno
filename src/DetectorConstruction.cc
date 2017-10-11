@@ -146,7 +146,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     SteelSurfMPT->AddProperty("EFFICIENCY", Ene_Steel, EFFICIENCY_Steel, 2);
     OpSSteelSurf->SetMaterialPropertiesTable(SteelSurfMPT);
 //    G4LogicalBorderSurface* SteelSurf= new G4LogicalBorderSurface("SteelSurface", WaterPhys, SteelPhys, OpSSteelSurf);
-    G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", WaterPhys, worldPhys, OpSSteelSurf);
+    G4LogicalBorderSurface* CDSurf= new G4LogicalBorderSurface("CDSurface", CDPhys, AcrylicPhys, OpSSteelSurf);
 
     G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 

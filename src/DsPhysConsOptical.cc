@@ -42,29 +42,54 @@
 DsPhysConsOptical::DsPhysConsOptical(const G4String& name): G4VPhysicsConstructor(name)
                                                             //                                                            , ToolBase(name)
 {
-    m_cerenMaxPhotonPerStep = 300;
+// for test
+    bool true_phys = false;
+    if(true_phys){
+        m_cerenMaxPhotonPerStep = 300;
 
-    //m_doReemission = true;
-    m_doReemission = false;
-    m_doScintAndCeren = true;
-    m_doReemissionOnly = false;
+        //m_doReemission = true;
+        m_doReemission = false;
+        m_doScintAndCeren = true;
+        m_doReemissionOnly = false;
 
-    m_useCerenkov=true;
-    m_applyWaterQe=true;
+        m_useCerenkov=true;
+        m_applyWaterQe=true;
 
-    m_useScintillation=true;
-    m_useScintSimple=false;
-    m_useRayleigh=true;
-    m_useAbsorption=true;
-    m_useAbsReemit=false;
-    m_useFastMu300nsTrick=false;
-    m_ScintillationYieldFactor = 1.0;
+        m_useScintillation=true;
+        m_useScintSimple=false;
+        m_useRayleigh=true;
+        m_useAbsorption=true;
+        m_useAbsReemit=false;
+        m_useFastMu300nsTrick=false;
+        m_ScintillationYieldFactor = 1.0;
 
-    m_enableQuenching=true;
+        m_enableQuenching=true;
+    }
+    else{
+
+        m_cerenMaxPhotonPerStep = 300;
+
+        m_doReemission = false;
+        m_doScintAndCeren = false;
+        m_doReemissionOnly = false;
+
+        m_useCerenkov=false;
+        m_applyWaterQe=false;
+
+        m_useScintillation=false;
+        m_useScintSimple=false;
+        m_useRayleigh=false;
+        m_useAbsorption=false;
+        m_useAbsReemit=false;
+        m_useFastMu300nsTrick=false;
+        m_ScintillationYieldFactor = 1.0;
+
+        m_enableQuenching=false;
+    }
     m_birksConstant1 = 6.5e-3*g/cm2/MeV;
     m_birksConstant2 = 1.5e-6*(g/cm2/MeV)*(g/cm2/MeV);
 
-    m_gammaSlowerTime = 190*ns; 
+    m_gammaSlowerTime = 190*ns;
     m_gammaSlowerRatio = 0.15;
 
     m_neutronSlowerTime = 220*ns;
