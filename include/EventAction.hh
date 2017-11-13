@@ -3,7 +3,7 @@
 
 #include <G4UserEventAction.hh>
 #include <globals.hh>
-#include <G4Accumulable.hh>
+//#include <G4Accumulable.hh>
 
 class EventAction : public G4UserEventAction
 {
@@ -17,10 +17,10 @@ class EventAction : public G4UserEventAction
         void AddCerenkovOP();
         void AddScintillatorOP();
 
-    private:
-        G4Accumulable<G4int>    fNOPs;
-        G4Accumulable<G4int>    fNCerenkovOPs;
-        G4Accumulable<G4int>    fNScintillatorOPs;
+    privatet :
+        //G4Accumulable<G4int>    fNOPs;
+        //G4Accumulable<G4int>    fNCerenkovOPs;
+        //G4Accumulable<G4int>    fNScintillatorOPs;
 
         // Numerical IDs for hit collections (-1 means unknown yet)
         G4int fLSETId { -1 };
