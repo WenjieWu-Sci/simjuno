@@ -26,6 +26,11 @@
 #include "DetectorConstruction.hh"
 #include "LSExpPhysicsList.hh"
 #include "AnalysisManager.hh"
+#include "RunAction.hh"
+#include "EventAction.hh"
+#include "StackingAction.hh"
+#include "SteppingAction.hh"
+#include "B2PrimaryGeneratorAction.hh"
 
 using namespace std;
 
@@ -66,6 +71,15 @@ int main(int argc, char** argv)
         visManager->SetVerboseLevel(0);    // Default, you can always override this using macro commands
         visManager->Initialize();
     #endif
+
+    RunAction* theRunAction = new RunAction();
+    runManager->SetUserAction(theRunAction);
+
+    runManager->SetUserAction(new B2PrimaryGeneratorAction());
+    EventAction* theEventAction = new EventAction();
+    runManager->SetUserAction(new EventAction());
+    runManager->SetUserAction(new StackingAction(theRunAction,theEventAction));
+    runManager->SetUserAction(new SteppingAction(theRunAction));
 
     runManager->SetUserInitialization(new LSExpPhysicsList());
 
