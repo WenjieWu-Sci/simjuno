@@ -12,7 +12,7 @@
 #include <G4Element.hh>
 #include <G4Material.hh>
 #include <G4MaterialPropertiesTable.hh>
-#include "G4GenericMessenger.hh"
+//#include "G4GenericMessenger.hh"
 
 LSExpDetectorConstructionMaterial::LSExpDetectorConstructionMaterial() {
     initialize();

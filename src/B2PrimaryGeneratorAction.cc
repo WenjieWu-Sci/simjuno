@@ -38,7 +38,7 @@
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4GenericMessenger.hh"
+//#include "G4GenericMessenger.hh"
 #include "TMath.h"
 
 #include "Randomize.hh"
@@ -47,7 +47,7 @@
 
 B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
  : G4VUserPrimaryGeneratorAction(),
-   fMessenger(0),
+//   fMessenger(0),
    fParticleGun(0),
    fRandom(false)
 {
@@ -71,14 +71,14 @@ B2PrimaryGeneratorAction::B2PrimaryGeneratorAction()
 
   // Generic messenger
   // Define /JUNO/primary commands using generic messenger class
-  fMessenger
-    = new G4GenericMessenger(this, "/JUNO/primary/", "Primary generator control");
+//  fMessenger
+//    = new G4GenericMessenger(this, "/JUNO/primary/", "Primary generator control");
 
   // Define /JUNO/primary/setRandom command
-  fMessenger
-    ->DeclareProperty("setRandom",
-                      fRandom,
-                      "Activate/Inactivate random option");
+//  fMessenger
+//    ->DeclareProperty("setRandom",
+//                      fRandom,
+//                      "Activate/Inactivate random option");
 
 }
 
