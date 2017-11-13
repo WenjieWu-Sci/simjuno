@@ -8,7 +8,7 @@
 #include <G4Box.hh>
 #include <G4Orb.hh>
 #include <G4SDManager.hh>
-#include <G4GlobalMagFieldMessenger.hh>
+//#include <G4GlobalMagFieldMessenger.hh>
 #include <G4Sphere.hh>
 #include <G4PhysicalConstants.hh>
 #include <G4SystemOfUnits.hh>
