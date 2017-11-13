@@ -2,7 +2,7 @@
 #include <G4Gamma.hh>
 #include <G4Electron.hh>
 #include <G4OpticalPhoton.hh>
-#include <G4AccumulableManager.hh>
+//#include <G4AccumulableManager.hh>
 #include <G4SystemOfUnits.hh>
 
 //#include "AnalysisManager.hh"
