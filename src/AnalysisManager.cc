@@ -126,6 +126,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     (*hit)->GetBoundaryProcessStatus()==10 && (*hit)->GetProcessName()=="Transportation") {
                 G4int tmp_nRayScattering= 0;
                 nPhotons++;
+                G4cout << "Detection !!! <<<<<<<<<<<<<" << G4endl;
                 if(nPhotons > 0){
                     X_Det[nPhotons-1]= (*hit)->GetPostPosition().getX();
                     Y_Det[nPhotons-1]= (*hit)->GetPostPosition().getY();
@@ -162,7 +163,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     nRayleigh[nPhotons-1]= tmp_nRayScattering;
                     G4PrimaryVertex* primVertex = event->GetPrimaryVertex();
                     G4PrimaryParticle* primPart = primVertex->GetPrimary();
-                    E_Init[nPhotons-1] = primPart->GetTotalEnergy();
+                    //E_Init[nPhotons-1] = primPart->GetTotalEnergy();
 
                     X_Init[nPhotons-1] = primVertex->GetX0();
                     Y_Init[nPhotons-1] = primVertex->GetY0();

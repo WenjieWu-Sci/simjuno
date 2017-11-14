@@ -46,17 +46,17 @@ DsPhysConsOptical::DsPhysConsOptical(const G4String& name): G4VPhysicsConstructo
     // for test
     m_cerenMaxPhotonPerStep = 300;
 
-    m_doReemission = true;
-    m_doScintAndCeren = true;
+    m_doReemission = false;
+    m_doScintAndCeren = false;
     m_doReemissionOnly = false;
 
-    m_useCerenkov=true;
+    m_useCerenkov=false;
     m_applyWaterQe=true;
 
     m_useScintillation=true;
     m_useScintSimple=false;
     m_useRayleigh=true;
-    m_useAbsorption=true;
+    m_useAbsorption=false;
     m_useAbsReemit=false;
     m_useFastMu300nsTrick=false;
     m_ScintillationYieldFactor = 1.0;
@@ -98,7 +98,7 @@ void DsPhysConsOptical::ConstructProcess()
 #ifdef USE_CUSTOM_CERENKOV
 
     DsG4Cerenkov* cerenkov = 0;
-    LogInfo << "DoCerenkov: " << m_useCerenkov << std::endl;
+    G4cout << "DoCerenkov: " << m_useCerenkov << std::endl;
     if (m_useCerenkov) {
         cerenkov = new DsG4Cerenkov();
         cerenkov->SetMaxNumPhotonsPerStep(m_cerenMaxPhotonPerStep);

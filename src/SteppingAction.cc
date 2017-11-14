@@ -23,7 +23,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     if ( volume != nullptr ) {
         if (volume->GetName() == "absorber0") {
             if (aStep->GetTrack()->GetParticleDefinition()==G4Electron::Definition()) {
-                fRunAction->AddTrackLength(aStep->GetStepLength());
+//                fRunAction->AddTrackLength(aStep->GetStepLength());
             }
         }
     }

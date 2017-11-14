@@ -73,8 +73,6 @@
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "globals.hh"
-#include "G4PhysicalConstants.hh"
-#include "G4SystemOfUnits.hh"
 
 //#include "DsPhotonTrackInfo.h"
 //#include "G4DataHelpers/G4CompositeTrackInfo.h"
@@ -126,8 +124,8 @@ DsG4ScintSimple::DsG4ScintSimple(const G4String& processName,
     theSlowIntegralTable = NULL;
     theReemissionIntegralTable = NULL;
 
-    verboseLevel = 2;
-    G4cout << " DsG4ScintSimple set verboseLevel by hand to " << verboseLevel << G4endl;
+    //verboseLevel = 2;
+    //G4cout << " DsG4ScintSimple set verboseLevel by hand to " << verboseLevel << G4endl;
 
     if (verboseLevel > 0) {
         G4cout << GetProcessName() << " is created " << G4endl;
@@ -320,7 +318,8 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         
         if ( Reemission_Prob == 0)
             return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
-        G4double p_reemission= Reemission_Prob->Value(aTrack.GetKineticEnergy());
+        G4double p_reemission=
+            Reemission_Prob->GetProperty(aTrack.GetKineticEnergy());
         if (G4UniformRand() >= p_reemission)
             return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
         NumTracks= 1;
@@ -353,7 +352,7 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
                        << G4endl;
                 return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
             }
-            ScintillationYield = ptable->Value(0);
+            ScintillationYield = ptable->GetProperty(0);
         }
         if (verboseLevel > 0) {
             G4cout << __LINE__ << " ScintillationYield: " << ScintillationYield
@@ -365,7 +364,7 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
             const G4MaterialPropertyVector* ptable =
                 aMaterialPropertiesTable->GetProperty("RESOLUTIONSCALE");
             if (ptable)
-                ResolutionScale = ptable->Value(0);
+                ResolutionScale = ptable->GetProperty(0);
         }
 
         G4double dE = TotalEnergyDeposit;
@@ -486,10 +485,10 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         }
         if (!ptable) ptable = aMaterialPropertiesTable->GetProperty("FASTTIMECONSTANT");
         if (ptable) {
-            fastTimeConstant = ptable->Value(0);
+            fastTimeConstant = ptable->GetProperty(0);
           if (verboseLevel > 0) { 
             G4cout << " dump fast time constant table " << G4endl;
-//            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
           }
         }
     }
@@ -503,10 +502,10 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         }
         if(!ptable) ptable = aMaterialPropertiesTable->GetProperty("SLOWTIMECONSTANT");
         if (ptable){
-          slowTimeConstant = ptable->Value(0);
+          slowTimeConstant = ptable->GetProperty(0);
           if (verboseLevel > 0) { 
             G4cout << " dump slow time constant table " << G4endl;
-//            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
           }
         }
     }
@@ -517,10 +516,10 @@ DsG4ScintSimple::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
             aMaterialPropertiesTable->GetProperty(strYieldRatio.c_str());
         if(!ptable) ptable = aMaterialPropertiesTable->GetProperty("YIELDRATIO");
         if (ptable) {
-            YieldRatio = ptable->Value(0);
+            YieldRatio = ptable->GetProperty(0);
             if (verboseLevel > 0) {
                 G4cout << " YieldRatio = "<< YieldRatio << " and dump yield ratio table (yield ratio = fast/(fast+slow): " << G4endl;
-//                const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+                const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
             }
         }
     }
@@ -809,17 +808,19 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs 
 
-                //theFastLightVector->ResetIterator();
-                //++(*theFastLightVector);        // advance to 1st entry 
+                theFastLightVector->ResetIterator();
+                ++(*theFastLightVector);        // advance to 1st entry 
 
-                G4double currentIN = (*theFastLightVector)[0];
+                G4double currentIN = theFastLightVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation 
                     // Integral pair  
 
-                    G4double currentPM= theFastLightVector->Energy(0);
+                    G4double currentPM = theFastLightVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
@@ -835,12 +836,12 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material  
 
-                    for (size_t ii= 1;
-                         ii< theFastLightVector->GetVectorLength();
-                         ii++)
-                    {
-                        currentPM= theFastLightVector->Energy(ii);
-                        currentIN= (*theFastLightVector)[ii];
+                    while(++(*theFastLightVector)) {
+                        currentPM = theFastLightVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theFastLightVector->  
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 
@@ -869,17 +870,19 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs
 
-//                theSlowLightVector->ResetIterator();
-//                ++(*theSlowLightVector);  // advance to 1st entry
+                theSlowLightVector->ResetIterator();
+                ++(*theSlowLightVector);  // advance to 1st entry
 
-                G4double currentIN = (*theSlowLightVector)[0];
+                G4double currentIN = theSlowLightVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation
                     // Integral pair
 
-                    G4double currentPM = theSlowLightVector->Energy(0);
+                    G4double currentPM = theSlowLightVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
@@ -895,12 +898,12 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material
 
-                    for (size_t ii= 1;
-                         ii< theSlowLightVector->GetVectorLength();
-                         ++ii)
-                    {
-                        currentPM= theSlowLightVector->Energy(ii);
-                        currentIN= (*theSlowLightVector)[ii];
+                    while(++(*theSlowLightVector)) {
+                        currentPM = theSlowLightVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theSlowLightVector->
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 
@@ -929,17 +932,19 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs
 
-//                theReemissionVector->ResetIterator();
-//                ++(*theReemissionVector);  // advance to 1st entry
+                theReemissionVector->ResetIterator();
+                ++(*theReemissionVector);  // advance to 1st entry
 
-                G4double currentIN = (*theReemissionVector)[0];
+                G4double currentIN = theReemissionVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation
                     // Integral pair
 
-                    G4double currentPM = theReemissionVector->Energy(0);
+                    G4double currentPM = theReemissionVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
@@ -955,12 +960,12 @@ void DsG4ScintSimple::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material
 
-                    for (size_t ii= 1;
-                         ii< theReemissionVector->GetVectorLength();
-                         ++ii)
-                    {
-                        currentPM= theReemissionVector->Energy(ii);
-                        currentIN= (*theReemissionVector)[ii];
+                    while(++(*theReemissionVector)) {
+                        currentPM = theReemissionVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theReemissionVector->
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 

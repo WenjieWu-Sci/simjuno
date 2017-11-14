@@ -13,11 +13,11 @@ class EventAction : public G4UserEventAction
         void BeginOfEventAction(const G4Event* event) override;
         void EndOfEventAction(const G4Event* event) override;
 
-        void AddOP();
-        void AddCerenkovOP();
-        void AddScintillatorOP();
+//        void AddOP();
+//        void AddCerenkovOP();
+//        void AddScintillatorOP();
 
-    privatet :
+    private :
         //G4Accumulable<G4int>    fNOPs;
         //G4Accumulable<G4int>    fNCerenkovOPs;
         //G4Accumulable<G4int>    fNScintillatorOPs;

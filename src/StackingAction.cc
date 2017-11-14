@@ -25,19 +25,19 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack (const G4Track*
     // Register optical photons
     if (aTrack->GetParticleDefinition() == G4OpticalPhoton::Definition()) {
         if (aTrack->GetParentID()>0) {
-            fEventAction->AddOP();
+            //fEventAction->AddOP();
             if (aTrack->GetCreatorProcess()->GetProcessName() == "Cerenkov") {
-                fEventAction->AddCerenkovOP();
+              //  fEventAction->AddCerenkovOP();
             } else if (aTrack->GetCreatorProcess()->GetProcessName() == "Scintillation") {
-                fEventAction->AddScintillatorOP();
+             //   fEventAction->AddScintillatorOP();
             }
         }
     }
 
     // Register only secondaries, i.e. tracks having ParentID > 0
     if (aTrack->GetParentID()) {
-        fRunAction->AddSecondary(aTrack->GetParticleDefinition(),
-                aTrack->GetKineticEnergy());
+        //fRunAction->AddSecondary(aTrack->GetParticleDefinition(),
+        //        aTrack->GetKineticEnergy());
     }
     // Do not affect track classification. Just return what would have
     // been returned by the base class

@@ -12,7 +12,7 @@
 using namespace std;
 
 EventAction::EventAction() :
-    G4UserEventAction(),
+    G4UserEventAction(){
 //    fNOPs("NOPs", 0),
 //    fNCerenkovOPs("NCerenkovOPs", 0),
 //    fNScintillatorOPs("NScintillatorOPs", 0) {

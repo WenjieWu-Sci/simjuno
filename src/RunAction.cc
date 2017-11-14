@@ -5,13 +5,13 @@
 //#include <G4AccumulableManager.hh>
 #include <G4SystemOfUnits.hh>
 
-//#include "AnalysisManager.hh"
+#include "AnalysisManager.hh"
 
 RunAction::RunAction() :
-    G4UserRunAction(),
-    fNGammas("NGammas", 0),
-    fNElectrons("NElectrons", 0),
-    fTotalTrackLength("TotalTrackLength",0.)
+    G4UserRunAction()
+    //fNGammas("NGammas", 0),
+    //fNElectrons("NElectrons", 0),
+    //fTotalTrackLength("TotalTrackLength",0.)
 {
     // Register created accumulables
 //    G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
@@ -46,7 +46,6 @@ void RunAction::EndOfRunAction(const G4Run* run) {
 //    G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 //    accumulableManager->Merge();
 
-    if (IsMaster()) {
         G4cout
             << "\n--------------------End of Global Run-----------------------"
             << " \n The run was " << nofEvents << " events " << G4endl;
@@ -60,7 +59,6 @@ void RunAction::EndOfRunAction(const G4Run* run) {
 //                " secondary electrons/event." << G4endl;
 //        else
 //            G4cout << " * No secondary electrons produced" << G4endl;
-    }
 }
 
 RunAction::~RunAction() {;}

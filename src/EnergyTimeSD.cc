@@ -38,7 +38,7 @@ G4bool EnergyTimeSD::ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) {
     }
     G4cout << "debug (create process): " << CreatorProcess << G4endl;
     G4String ProcessName= PostStep->GetProcessDefinedStep()->GetProcessName();
-    static G4ThreadLocal G4OpBoundaryProcess* boundary= NULL;
+    static G4OpBoundaryProcess* boundary= NULL;
     G4ProcessManager* pm= aTrack->GetDefinition()->GetProcessManager();
     G4int nprocesses= pm->GetProcessListLength();
     G4ProcessVector* pv= pm->GetProcessList();

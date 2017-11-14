@@ -15,7 +15,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     public:
         // Main method that has to be overridden in all detectors
         G4VPhysicalVolume* Construct() override;
-        void ConstructSDandField() override;
+        void ConstructSDandField();
 
     private:
         G4LogicalVolume* worldLog;

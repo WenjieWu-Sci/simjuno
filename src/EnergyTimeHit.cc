@@ -1,7 +1,7 @@
 #include "EnergyTimeHit.hh"
 #include <G4SystemOfUnits.hh>
 
-G4ThreadLocal G4Allocator<EnergyTimeHit>* hitAllocator = nullptr;
+G4Allocator<EnergyTimeHit>* hitAllocator = nullptr;
 
 void EnergyTimeHit::Print()
 {

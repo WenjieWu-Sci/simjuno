@@ -66,9 +66,9 @@ private:
     G4double fPostStepTime;
 };
 
-using EnergyTimeHitsCollection = G4THitsCollection<EnergyTimeHit>;
+typedef G4THitsCollection<EnergyTimeHit> EnergyTimeHitsCollection;
 
-extern G4ThreadLocal G4Allocator<EnergyTimeHit> *hitAllocator;
+extern G4Allocator<EnergyTimeHit> *hitAllocator;
 
 inline void* EnergyTimeHit::operator new(size_t)
 {

@@ -13,9 +13,9 @@ ifndef G4INSTALL
   G4INSTALL = /sps/hep/juno/qihuang/geant4-9.4.4/share/geant4-9.4.4
 endif
 
-include $(G4INSTALL)/config/architecture.gmk
+#include $(G4INSTALL)/config/architecture.gmk
 
-CPPFLAGS += -I$(ROOTSYS)/v5.34.11/include
+CPPFLAGS += -I$(ROOTSYS)/v5.34.11/include -std=c++11
 #EXTRALIBS := -L$(ROOTSYS)/lib -lCore -lTree -lCint -lReflex -lCintex -ldl
 EXTRALIBS := $(shell $(ROOTSYS)/v5.34.11/bin/root-config --libs) -lReflex -lCintex
 

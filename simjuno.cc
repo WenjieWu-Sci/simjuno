@@ -21,7 +21,7 @@
 #include <G4String.hh>
 #include <G4UImanager.hh>
 
-#include "ActionInitialization.hh"
+//#include "ActionInitialization.hh"
 
 #include "DetectorConstruction.hh"
 #include "LSExpPhysicsList.hh"
@@ -72,6 +72,7 @@ int main(int argc, char** argv)
         visManager->Initialize();
     #endif
 
+    runManager->SetUserInitialization(new LSExpPhysicsList());
     RunAction* theRunAction = new RunAction();
     runManager->SetUserAction(theRunAction);
 
@@ -81,18 +82,17 @@ int main(int argc, char** argv)
     runManager->SetUserAction(new StackingAction(theRunAction,theEventAction));
     runManager->SetUserAction(new SteppingAction(theRunAction));
 
-    runManager->SetUserInitialization(new LSExpPhysicsList());
 
     runManager->SetUserInitialization(new DetectorConstruction());
-    runManager->SetUserInitialization(new ActionInitialization());
+//    runManager->SetUserInitialization(new ActionInitialization());
 
-    #ifdef G4UI_USE
+//    #ifdef G4UI_USE
         G4UIExecutive* ui = nullptr;
         if (interactive)
         {
             ui = new G4UIExecutive(argc, argv);
         }
-    #endif
+//    #endif
 
     G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
@@ -103,14 +103,14 @@ int main(int argc, char** argv)
         UImanager->ApplyCommand(command + *it);
     }
 
-    #ifdef G4UI_USE
+//    #ifdef G4UI_USE
         if (interactive)
         {
             UImanager->ApplyCommand("/control/execute macros/ui.mac");
             ui->SessionStart();
             delete ui;
         }
-    #endif
+//    #endif
 
     delete visManager;
     delete runManager;

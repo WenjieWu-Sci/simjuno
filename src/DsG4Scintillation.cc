@@ -73,8 +73,6 @@
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
 #include "globals.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4PhysicalConstants.hh"
 
 //#include "DsPhotonTrackInfo.h"
 //#include "G4DataHelpers/G4CompositeTrackInfo.h"
@@ -126,8 +124,8 @@ DsG4Scintillation::DsG4Scintillation(const G4String& processName,
     theSlowIntegralTable = NULL;
     theReemissionIntegralTable = NULL;
 
-    verboseLevel = 2;
-    G4cout << " DsG4Scintillation set verboseLevel by hand to " << verboseLevel << G4endl;
+    //verboseLevel = 2;
+    //G4cout << " DsG4Scintillation set verboseLevel by hand to " << verboseLevel << G4endl;
 
     if (verboseLevel > 0) {
         G4cout << GetProcessName() << " is created " << G4endl;
@@ -193,29 +191,23 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
     }
 
-    G4String pname= "";
+
+    G4String pname="";
     G4ThreeVector vertpos;
     G4double vertenergy=0.0;
     G4double reem_d=0.0;
     G4bool flagReemission= false;
     //DsPhotonTrackInfo* reemittedTI=0;
     if (aTrack.GetDefinition() == G4OpticalPhoton::OpticalPhoton()) {
-        G4Track* track= aStep.GetTrack();
+        G4Track *track=aStep.GetTrack();
         //G4CompositeTrackInfo* composite=dynamic_cast<G4CompositeTrackInfo*>(track->GetUserInformation());
         //reemittedTI = composite?dynamic_cast<DsPhotonTrackInfo*>( composite->GetPhotonTrackInfo() ):0;
         
-        //const G4VProcess* process = track->GetCreatorProcess();
-        //if(process) pname = process->GetProcessName();
-        const G4VProcess* process;
-        if (track->GetParentID()==0) {
-            process= aStep.GetPostStepPoint()->GetProcessDefinedStep();
-        } else {
-            process= track->GetCreatorProcess();
-        }
+        const G4VProcess* process = track->GetCreatorProcess();
         if(process) pname = process->GetProcessName();
 
         if (verboseLevel > 0) { 
-          G4cout<<"Optical photon. Process name is " << pname <<G4endl;
+          G4cout<<"Optical photon. Process name is " << pname<<G4endl;
         } 
         if(doBothProcess) {
             flagReemission= doReemission
@@ -238,8 +230,8 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
 
     G4double TotalEnergyDeposit = aStep.GetTotalEnergyDeposit();
     if (verboseLevel > 0 ) { 
-      G4cout << " TotalEnergyDeposit: " << TotalEnergyDeposit 
-             << " material: " << aTrack.GetMaterial()->GetName() << G4endl;
+      G4cout << " TotalEnergyDeposit " << TotalEnergyDeposit 
+             << " material " << aTrack.GetMaterial()->GetName() << G4endl;
     }
     if (TotalEnergyDeposit <= 0.0 && !flagReemission) {
         return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
@@ -249,7 +241,8 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
     const G4String aParticleName = aParticle->GetDefinition()->GetParticleName();
     const G4Material* aMaterial = aTrack.GetMaterial();
 
-    G4MaterialPropertiesTable* aMaterialPropertiesTable= aMaterial->GetMaterialPropertiesTable();
+    G4MaterialPropertiesTable* aMaterialPropertiesTable =
+        aMaterial->GetMaterialPropertiesTable();
 
     //aMaterialPropertiesTable-> DumpTable();
 
@@ -291,13 +284,15 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
       slowerRatio = neutronSlowerRatio;
     }
 
-    const G4MaterialPropertyVector* Fast_Intensity= aMaterialPropertiesTable->GetProperty("FASTCOMPONENT"); 
-    const G4MaterialPropertyVector* Slow_Intensity= aMaterialPropertiesTable->GetProperty("SLOWCOMPONENT");
-    const G4MaterialPropertyVector* Reemission_Prob= aMaterialPropertiesTable->GetProperty("REEMISSIONPROB");
+    const G4MaterialPropertyVector* Fast_Intensity = 
+        aMaterialPropertiesTable->GetProperty("FASTCOMPONENT"); 
+    const G4MaterialPropertyVector* Slow_Intensity =
+        aMaterialPropertiesTable->GetProperty("SLOWCOMPONENT");
+    const G4MaterialPropertyVector* Reemission_Prob =
+        aMaterialPropertiesTable->GetProperty("REEMISSIONPROB");
     if (verboseLevel > 0 ) {
       G4cout << " MaterialPropertyVectors: Fast_Intensity " << Fast_Intensity 
-             << " Slow_Intensity " << Slow_Intensity 
-             << " Reemission_Prob " << Reemission_Prob << G4endl;
+             << " Slow_Intensity " << Slow_Intensity << " Reemission_Prob " << Reemission_Prob << G4endl;
     }
     if (!Fast_Intensity && !Slow_Intensity )
         return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
@@ -305,9 +300,7 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
     G4int nscnt = 1;
     if (Fast_Intensity && Slow_Intensity) nscnt = 2;
     if ( verboseLevel > 0) {
-      G4cout << " Fast_Intensity " << Fast_Intensity 
-             << " Slow_Intensity " << Slow_Intensity 
-             << " nscnt " << nscnt << G4endl;
+      G4cout << " Fast_Intensity " << Fast_Intensity << " Slow_Intensity " << Slow_Intensity << " nscnt " << nscnt << G4endl;
     }
     G4StepPoint* pPreStepPoint  = aStep.GetPreStepPoint();
     G4StepPoint* pPostStepPoint = aStep.GetPostStepPoint();
@@ -325,7 +318,8 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         
         if ( Reemission_Prob == 0)
             return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
-        G4double p_reemission= Reemission_Prob->Value(aTrack.GetKineticEnergy());
+        G4double p_reemission=
+            Reemission_Prob->GetProperty(aTrack.GetKineticEnergy());
         if (G4UniformRand() >= p_reemission)
             return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
         NumTracks= 1;
@@ -351,23 +345,22 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         
         G4double ScintillationYield = 0;
         {// Yield.  Material must have this or we lack raisins dayetras
-//            const G4MaterialPropertyVector* ptable = aMaterialPropertiesTable->GetConstProperty("SCINTILLATIONYIELD");
-            const G4double ptable = aMaterialPropertiesTable->GetConstProperty("SCINTILLATIONYIELD");
+            const G4MaterialPropertyVector* ptable =
+                aMaterialPropertiesTable->GetProperty("SCINTILLATIONYIELD");
             if (!ptable) {
                 G4cout << "ConstProperty: failed to get SCINTILLATIONYIELD"
                        << G4endl;
                 return G4VRestDiscreteProcess::PostStepDoIt(aTrack, aStep);
             }
-            ScintillationYield = ptable;
-            G4cout << "Scintillation yield is : " << ScintillationYield << G4endl;
+            ScintillationYield = ptable->GetProperty(0);
         }
 
         G4double ResolutionScale    = 1;
         {// Resolution Scale
-//            const G4MaterialPropertyVector* ptable = aMaterialPropertiesTable->GetProperty("RESOLUTIONSCALE");
-            const G4double ptable = aMaterialPropertiesTable->GetConstProperty("RESOLUTIONSCALE");
+            const G4MaterialPropertyVector* ptable =
+                aMaterialPropertiesTable->GetProperty("RESOLUTIONSCALE");
             if (ptable)
-                ResolutionScale = ptable;
+                ResolutionScale = ptable->GetProperty(0);
         }
 
         G4double dE = TotalEnergyDeposit;
@@ -476,59 +469,48 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
         
     G4double fastTimeConstant = 0.0;
     if (flagDecayTimeFast) { // Fast Time Constant
-//        const G4MaterialPropertyVector* ptable= aMaterialPropertiesTable->GetConstProperty(FastTimeConstant.c_str());
-        G4double ptable;
-        if (aMaterialPropertiesTable->ConstPropertyExists(FastTimeConstant.c_str())) {
-            ptable= aMaterialPropertiesTable->GetConstProperty(FastTimeConstant.c_str());
-        } else if (aMaterialPropertiesTable->ConstPropertyExists("FASTTIMECONSTANT")) {
-            ptable= aMaterialPropertiesTable->GetConstProperty("FASTTIMECONSTANT");
-        }
+        const G4MaterialPropertyVector* ptable =
+        aMaterialPropertiesTable->GetProperty(FastTimeConstant.c_str());
         if (verboseLevel > 0) {
-            G4cout << " MaterialPropertyVector table " << ptable << " for FASTTIMECONSTANT"<<G4endl;
+          G4cout << " MaterialPropertyVector table " << ptable << " for FASTTIMECONSTANT"<<G4endl;
         }
+        if (!ptable) ptable = aMaterialPropertiesTable->GetProperty("FASTTIMECONSTANT");
         if (ptable) {
-          fastTimeConstant = ptable;
-//          if (verboseLevel > 0) { 
-//            G4cout << " dump fast time constant table " << G4endl;
-//            const_cast <G4MaterialPropertyVector*>(ptable)->DumpValues();
-//          }
+            fastTimeConstant = ptable->GetProperty(0);
+          if (verboseLevel > 0) { 
+            G4cout << " dump fast time constant table " << G4endl;
+            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+          }
         }
     }
 
     G4double slowTimeConstant = 0.0;
     if (flagDecayTimeSlow) { // Slow Time Constant
-//        const G4MaterialPropertyVector* ptable = aMaterialPropertiesTable->GetProperty(SlowTimeConstant.c_str());
-        G4double ptable;
-        if (aMaterialPropertiesTable->ConstPropertyExists(SlowTimeConstant.c_str())) {
-            ptable= aMaterialPropertiesTable->GetConstProperty(SlowTimeConstant.c_str());
-        } else if (aMaterialPropertiesTable->ConstPropertyExists("SLOWTIMECONSTANT")) {
-            ptable = aMaterialPropertiesTable->GetConstProperty("SLOWTIMECONSTANT");
-        }
+        const G4MaterialPropertyVector* ptable =
+        aMaterialPropertiesTable->GetProperty(SlowTimeConstant.c_str());
         if (verboseLevel > 0) {
           G4cout << " MaterialPropertyVector table " << ptable << " for SLOWTIMECONSTANT"<<G4endl;
         }
+        if(!ptable) ptable = aMaterialPropertiesTable->GetProperty("SLOWTIMECONSTANT");
         if (ptable){
-          slowTimeConstant = ptable;
-//          if (verboseLevel > 0) { 
-//            G4cout << " dump slow time constant table " << G4endl;
-//            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
-//          }
+          slowTimeConstant = ptable->GetProperty(0);
+          if (verboseLevel > 0) { 
+            G4cout << " dump slow time constant table " << G4endl;
+            const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+          }
         }
     }
 
     G4double YieldRatio = 0.0;
-    { 
-        G4double ptable;
-        if (aMaterialPropertiesTable->ConstPropertyExists(strYieldRatio.c_str())) {
-            ptable = aMaterialPropertiesTable->GetConstProperty(strYieldRatio.c_str());
-        } else if (aMaterialPropertiesTable->ConstPropertyExists("YIELDRATIO")) {
-            ptable = aMaterialPropertiesTable->GetConstProperty("YIELDRATIO");
-        }
+    { // Slow Time Constant
+        const G4MaterialPropertyVector* ptable =
+            aMaterialPropertiesTable->GetProperty(strYieldRatio.c_str());
+        if(!ptable) ptable = aMaterialPropertiesTable->GetProperty("YIELDRATIO");
         if (ptable) {
-            YieldRatio = ptable;
+            YieldRatio = ptable->GetProperty(0);
             if (verboseLevel > 0) {
-                G4cout << " YieldRatio = "<< YieldRatio << "  (yield ratio = fast/(fast+slow): " << G4endl;
-//                const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
+                G4cout << " YieldRatio = "<< YieldRatio << " and dump yield ratio table (yield ratio = fast/(fast+slow): " << G4endl;
+                const_cast <G4MaterialPropertyVector*>(ptable)->DumpVector();
             }
         }
     }
@@ -598,8 +580,10 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
             G4double sampledEnergy;
             if ( !flagReemission ) {
                 // normal scintillation
-                G4double CIIvalue = G4UniformRand()*ScintillationIntegral->GetMaxValue();
-                sampledEnergy= ScintillationIntegral->GetEnergy(CIIvalue);
+                G4double CIIvalue = G4UniformRand()*
+                    ScintillationIntegral->GetMaxValue();
+                sampledEnergy=
+                    ScintillationIntegral->GetEnergy(CIIvalue);
 
                 if (verboseLevel>1) 
                     {
@@ -742,10 +726,7 @@ DsG4Scintillation::PostStepDoIt(const G4Track& aTrack, const G4Step& aStep)
                 
             aSecondaryTrack->SetWeight( weight );
             if ( verboseLevel > 0 ) {
-              G4cout << " aSecondaryTrack->SetWeight( " << weight
-                     << " ) ; aSecondaryTrack->GetWeight() = " << aSecondaryTrack->GetWeight() 
-                     << G4endl;
-            }
+              G4cout << " aSecondaryTrack->SetWeight( " << weight<< " ) ; aSecondaryTrack->GetWeight() = " << aSecondaryTrack->GetWeight() << G4endl;}
             // The above line is necessary because AddSecondary() 
             // overrides our setting of the secondary track weight, 
             // in Geant4.3.1 & earlier. (and also later, at least 
@@ -771,19 +752,19 @@ void DsG4Scintillation::BuildThePhysicsTable()
 {
     if (theFastIntegralTable && theSlowIntegralTable && theReemissionIntegralTable) return;
 
-    const G4MaterialTable* theMaterialTable= G4Material::GetMaterialTable();
-    G4int numOfMaterials= G4Material::GetNumberOfMaterials();
+    const G4MaterialTable* theMaterialTable = 
+        G4Material::GetMaterialTable();
+    G4int numOfMaterials = G4Material::GetNumberOfMaterials();
 
     // create new physics table
     if (verboseLevel > 0) {
-        G4cout << G4endl;
-        G4cout << " theFastIntegralTable " << theFastIntegralTable 
-               << " theSlowIntegralTable " << theSlowIntegralTable 
-               << " theReemissionIntegralTable " << theReemissionIntegralTable << G4endl;
+      G4cout << " theFastIntegralTable " << theFastIntegralTable 
+             << " theSlowIntegralTable " << theSlowIntegralTable 
+             << " theReemissionIntegralTable " << theReemissionIntegralTable << G4endl;
     }
-    if(!theFastIntegralTable) theFastIntegralTable = new G4PhysicsTable(numOfMaterials);
-    if(!theSlowIntegralTable) theSlowIntegralTable = new G4PhysicsTable(numOfMaterials);
-    if(!theReemissionIntegralTable) theReemissionIntegralTable
+    if(!theFastIntegralTable)theFastIntegralTable = new G4PhysicsTable(numOfMaterials);
+    if(!theSlowIntegralTable)theSlowIntegralTable = new G4PhysicsTable(numOfMaterials);
+    if(!theReemissionIntegralTable)theReemissionIntegralTable
                                        = new G4PhysicsTable(numOfMaterials);
     if (verboseLevel > 0) {
       G4cout << " building the physics tables for the scintillation process " << G4endl;
@@ -802,7 +783,6 @@ void DsG4Scintillation::BuildThePhysicsTable()
         // the material from the material's optical properties table.
 
         G4Material* aMaterial = (*theMaterialTable)[i];
-        G4cout << " material : " << aMaterial->GetName() << G4endl;
 
         G4MaterialPropertiesTable* aMaterialPropertiesTable =
             aMaterial->GetMaterialPropertiesTable();
@@ -819,21 +799,24 @@ void DsG4Scintillation::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs 
 
-//                theFastLightVector->ResetIterator();
-//                ++(*theFastLightVector);        // advance to 1st entry 
+                theFastLightVector->ResetIterator();
+                ++(*theFastLightVector);        // advance to 1st entry 
 
-                G4double currentIN= (*theFastLightVector)[0];
+                G4double currentIN = theFastLightVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation 
                     // Integral pair  
 
-                    G4double currentPM= theFastLightVector->Energy(0);
+                    G4double currentPM = theFastLightVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
-                    aPhysicsOrderedFreeVector->InsertValues(currentPM , currentCII);
+                    aPhysicsOrderedFreeVector->
+                        InsertValues(currentPM , currentCII);
 
                     // Set previous values to current ones prior to loop
 
@@ -844,12 +827,12 @@ void DsG4Scintillation::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material  
 
-                    for (size_t ii= 1; 
-                         ii< theFastLightVector->GetVectorLength();
-                         ++ii) 
-                    {
-                        currentPM= theFastLightVector->Energy(ii);
-                        currentIN= (*theFastLightVector)[ii];
+                    while(++(*theFastLightVector)) {
+                        currentPM = theFastLightVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theFastLightVector->  
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 
@@ -878,21 +861,24 @@ void DsG4Scintillation::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs
 
-//                theSlowLightVector->ResetIterator();
-//                ++(*theSlowLightVector);  // advance to 1st entry
+                theSlowLightVector->ResetIterator();
+                ++(*theSlowLightVector);  // advance to 1st entry
 
-                G4double currentIN = (*theSlowLightVector)[0];
+                G4double currentIN = theSlowLightVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation
                     // Integral pair
 
-                    G4double currentPM = theSlowLightVector->Energy(0);
+                    G4double currentPM = theSlowLightVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
-                    bPhysicsOrderedFreeVector->InsertValues(currentPM , currentCII);
+                    bPhysicsOrderedFreeVector->
+                        InsertValues(currentPM , currentCII);
 
                     // Set previous values to current ones prior to loop
 
@@ -903,12 +889,12 @@ void DsG4Scintillation::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material
 
-                    for (size_t ii= 1; 
-                         ii< theSlowLightVector->GetVectorLength();
-                         ++ii)
-                    {
-                        currentPM= theSlowLightVector->Energy(ii);
-                        currentIN= (*theSlowLightVector)[ii];
+                    while(++(*theSlowLightVector)) {
+                        currentPM = theSlowLightVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theSlowLightVector->
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 
@@ -937,17 +923,19 @@ void DsG4Scintillation::BuildThePhysicsTable()
                 // Retrieve the first intensity point in vector
                 // of (photon energy, intensity) pairs
 
-//                theReemissionVector->ResetIterator();
-//                ++(*theReemissionVector);  // advance to 1st entry
+                theReemissionVector->ResetIterator();
+                ++(*theReemissionVector);  // advance to 1st entry
 
-                G4double currentIN = (*theReemissionVector)[0];
+                G4double currentIN = theReemissionVector->
+                    GetProperty();
 
                 if (currentIN >= 0.0) {
 
                     // Create first (photon energy, Scintillation
                     // Integral pair
 
-                    G4double currentPM = theReemissionVector->Energy(0);
+                    G4double currentPM = theReemissionVector->
+                        GetPhotonEnergy();
 
                     G4double currentCII = 0.0;
 
@@ -963,12 +951,12 @@ void DsG4Scintillation::BuildThePhysicsTable()
                     // loop over all (photon energy, intensity)
                     // pairs stored for this material
 
-                    for (size_t ii= 1;
-                         ii< theReemissionVector->GetVectorLength();
-                         ++ii)
-                    {
-                        currentPM= theReemissionVector->Energy(ii);
-                        currentIN= (*theReemissionVector)[ii];
+                    while(++(*theReemissionVector)) {
+                        currentPM = theReemissionVector->
+                            GetPhotonEnergy();
+
+                        currentIN=theReemissionVector->
+                            GetProperty();
 
                         currentCII = 0.5 * (prevIN + currentIN);
 
