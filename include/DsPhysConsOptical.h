@@ -17,6 +17,9 @@
 
 #include "G4VPhysicsConstructor.hh"
 //#include "SniperKernel/ToolBase.h"
+#include "globals.hh"
+
+class DsPhysConsOpticalMessenger;
 
 class DsPhysConsOptical : public G4VPhysicsConstructor
   //                      , public ToolBase
@@ -29,8 +32,12 @@ public:
     virtual ~DsPhysConsOptical();
 
     // Interface methods
-    void ConstructParticle();
-    void ConstructProcess();
+    virtual void ConstructParticle();
+    virtual void ConstructProcess();
+
+    //for the Messenger
+    void SetVerbose(G4int);
+    void SetTruePhysics(G4bool);
 
 private:
     /// Property: UseCerenkov, UseScintillation, UseRayleigh, UseAbsorption
@@ -93,6 +100,13 @@ private:
     /// flag to switch decay time
     bool flagDecayTimeFast;
     bool flagDecayTimeSlow;
+
+    //for the Messenger
+    DsPhysConsOpticalMessenger* fMessenger;
+    static G4ThreadLocal G4int fVerboseLevel;
+    static G4ThreadLocal G4bool fTruePhysics;
+
+    void InitialiseOptions();
 };
 
 #endif  // DSPHYSCONSOPTICAL_H

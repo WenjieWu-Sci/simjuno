@@ -32,6 +32,7 @@
 #include "G4FastSimulationManagerProcess.hh"
 
 #include "G4SystemOfUnits.hh"
+#include "DsPhysConsOpticalMessenger.hh"
 
 //#include "SniperKernel/SniperPtr.h"
 //#include "SniperKernel/ToolFactory.h"
@@ -39,78 +40,19 @@
 
 //DECLARE_TOOL(DsPhysConsOptical);
 
-DsPhysConsOptical::DsPhysConsOptical(const G4String& name): G4VPhysicsConstructor(name)
-                                                            //                                                            , ToolBase(name)
+G4ThreadLocal G4int DsPhysConsOptical::fVerboseLevel = 1;
+G4ThreadLocal G4bool DsPhysConsOptical::fTruePhysics = true;
+
+DsPhysConsOptical::DsPhysConsOptical(const G4String& name):
+    G4VPhysicsConstructor(name)
 {
-// for test
-    bool true_phys = false;
-    if(true_phys){
-        m_cerenMaxPhotonPerStep = 300;
+    fMessenger = new DsPhysConsOpticalMessenger(this);
 
-        //m_doReemission = true;
-        m_doReemission = false;
-        m_doScintAndCeren = true;
-        m_doReemissionOnly = false;
-
-        m_useCerenkov=true;
-        m_applyWaterQe=true;
-
-        m_useScintillation=true;
-        m_useScintSimple=false;
-        m_useRayleigh=true;
-        m_useAbsorption=true;
-        m_useAbsReemit=false;
-        m_useFastMu300nsTrick=false;
-        m_ScintillationYieldFactor = 1.0;
-
-        m_enableQuenching=true;
-    }
-    else{
-
-        m_cerenMaxPhotonPerStep = 300;
-
-        m_doReemission = false;
-        m_doScintAndCeren = false;
-        m_doReemissionOnly = false;
-
-        m_useCerenkov=false;
-        m_applyWaterQe=false;
-
-        m_useScintillation=false;
-        m_useScintSimple=false;
-        m_useRayleigh=false;
-        m_useAbsorption=false;
-        m_useAbsReemit=false;
-        m_useFastMu300nsTrick=false;
-        m_ScintillationYieldFactor = 1.0;
-
-        m_enableQuenching=false;
-    }
-    m_birksConstant1 = 6.5e-3*g/cm2/MeV;
-    m_birksConstant2 = 1.5e-6*(g/cm2/MeV)*(g/cm2/MeV);
-
-    m_gammaSlowerTime = 190*ns;
-    m_gammaSlowerRatio = 0.15;
-
-    m_neutronSlowerTime = 220*ns;
-    m_neutronSlowerRatio = 0.34;
-
-    m_alphaSlowerTime = 220*ns;
-    m_alphaSlowerRatio = 0.35;
-
-    m_doFastSim=true; // just the fast simulation
-
-    flagDecayTimeFast=true;
-    flagDecayTimeSlow=true;
-
-    //m_cerenPhotonScaleWeight = 3.125;
-    //m_scintPhotonScaleWeight = 3.125;
-    m_cerenPhotonScaleWeight = 1;
-    m_scintPhotonScaleWeight = 1;
 }
 
 DsPhysConsOptical::~DsPhysConsOptical()
 {
+    delete fMessenger;
 }
 
 void DsPhysConsOptical::ConstructParticle()
@@ -119,6 +61,7 @@ void DsPhysConsOptical::ConstructParticle()
 
 void DsPhysConsOptical::ConstructProcess()
 {
+    InitialiseOptions();
 #ifdef USE_CUSTOM_CERENKOV
 
     DsG4Cerenkov* cerenkov = 0;
@@ -129,7 +72,7 @@ void DsPhysConsOptical::ConstructProcess()
         cerenkov->SetApplyPreQE(m_cerenPhotonScaleWeight>1.);
         cerenkov->SetPreQE(1./m_cerenPhotonScaleWeight);
 
-        // wangzhe   Give user a handle to control it.   
+        // wangzhe   Give user a handle to control it.
         cerenkov->SetApplyWaterQe(m_applyWaterQe);
         // wz
         cerenkov->SetTrackSecondariesFirst(true);
@@ -149,12 +92,12 @@ void DsPhysConsOptical::ConstructProcess()
 
     // summary info
     G4cout << "DoQuenching: " << m_enableQuenching << G4endl;
-    G4cout << "Birks Constant 1: " 
-        << m_birksConstant1/(g/cm2/MeV) 
-        << "g/cm2/MeV" << G4endl;
+    G4cout << "Birks Constant 1: "
+           << m_birksConstant1/(g/cm2/MeV)
+           << "g/cm2/MeV" << G4endl;
     G4cout << "Birks Constant 2: "
-        << m_birksConstant2/((g/cm2/MeV)*(g/cm2/MeV))
-        << "(g/cm2/MeV)*(g/cm2/MeV)" << G4endl;
+           << m_birksConstant2/((g/cm2/MeV)*(g/cm2/MeV))
+           << "(g/cm2/MeV)*(g/cm2/MeV)" << G4endl;
     if (1 && (!m_useScintSimple)) {
         DsG4Scintillation* scint = new DsG4Scintillation();
         scint->SetDoQuenching(m_enableQuenching);
@@ -203,7 +146,7 @@ void DsPhysConsOptical::ConstructProcess()
         scint->SetTrackSecondariesFirst(true);
         scint->SetFlagDecayTimeFast(flagDecayTimeFast);
         scint->SetFlagDecayTimeSlow(flagDecayTimeSlow);
-        scint->SetVerboseLevel(0);
+        scint->SetVerboseLevel(fVerboseLevel);
         scint_ = scint;
     }
 #else  // standard G4 scint
@@ -230,25 +173,26 @@ void DsPhysConsOptical::ConstructProcess()
         absreemit_PPO = new DsG4OpAbsReemit("PPO");
         absreemit_bisMSB = new DsG4OpAbsReemit("bisMSB");
 
-        absreemit_PPO->SetVerboseLevel(0);
-        absreemit_bisMSB->SetVerboseLevel(0);
+        absreemit_PPO->SetVerboseLevel(fVerboseLevel);
+        absreemit_bisMSB->SetVerboseLevel(fVerboseLevel);
     }
 
     G4OpAbsorption* absorb = 0;
     if (m_useAbsorption) {
         absorb = new G4OpAbsorption();
-        absorb->SetVerboseLevel(2);
+        absorb->SetVerboseLevel(fVerboseLevel);
         //if (m_useScintSimple) absorb->SetVerboseLevel(0);
     }
 
     G4OpRayleigh* rayleigh = 0;
     if (m_useRayleigh) {
         rayleigh = new G4OpRayleigh();
-        rayleigh->SetVerboseLevel(2);
+        rayleigh->SetVerboseLevel(fVerboseLevel);
+        G4cout << "OpRay is set as " << fVerboseLevel << G4endl;
     }
 
     G4OpBoundaryProcess* boundproc = new G4OpBoundaryProcess();
-    boundproc->SetVerboseLevel(2);
+    boundproc->SetVerboseLevel(fVerboseLevel);
     //DsG4OpBoundaryProcess* boundproc = new DsG4OpBoundaryProcess();
     //boundproc->SetModel(unified);
 
@@ -273,7 +217,7 @@ void DsPhysConsOptical::ConstructProcess()
         }
 
         if(scint_ && scint_->IsApplicable(*particle)) {
-            if (m_useScintSimple) 
+            if (m_useScintSimple)
                 G4cout << "Associate Scintillation with Particle " << (particle->GetParticleName()) << G4endl;
 
             pmanager->AddProcess(scint_);
@@ -311,3 +255,80 @@ void DsPhysConsOptical::ConstructProcess()
         }
     }
 }
+
+void DsPhysConsOptical::SetVerbose(G4int verbose)
+{
+    fVerboseLevel = verbose;
+}
+
+void DsPhysConsOptical::InitialiseOptions(){
+    // for test
+    if(fTruePhysics){
+        if(fVerboseLevel>0)
+            G4cout << "using real physics for optical photons" << G4endl;
+        m_cerenMaxPhotonPerStep = 300;
+
+        //m_doReemission = true;
+        m_doReemission = true;
+        m_doScintAndCeren = true;
+        m_doReemissionOnly = false;
+
+        m_useCerenkov=true;
+        m_applyWaterQe=true;
+
+        m_useScintillation=true;
+        m_useScintSimple=false;
+        m_useRayleigh=true;
+        m_useAbsorption=true;
+        m_useAbsReemit=false;
+        m_useFastMu300nsTrick=false;
+        m_ScintillationYieldFactor = 1.0;
+
+        m_enableQuenching=true;
+    }
+    else{
+        if(fVerboseLevel>0)
+            G4cout << "using toy model physics for optical photons" << G4endl;
+        m_cerenMaxPhotonPerStep = 300;
+
+        m_doReemission = false;
+        m_doScintAndCeren = false;
+        m_doReemissionOnly = false;
+
+        m_useCerenkov=false;
+        m_applyWaterQe=false;
+
+        m_useScintillation=false;
+        m_useScintSimple=false;
+        m_useRayleigh=true;
+        m_useAbsorption=false;
+        m_useAbsReemit=false;
+        m_useFastMu300nsTrick=false;
+        m_ScintillationYieldFactor = 1.0;
+
+        m_enableQuenching=true;
+    }
+    m_birksConstant1 = 6.5e-3*g/cm2/MeV;
+    m_birksConstant2 = 1.5e-6*(g/cm2/MeV)*(g/cm2/MeV);
+
+    m_gammaSlowerTime = 190*ns;
+    m_gammaSlowerRatio = 0.15;
+
+    m_neutronSlowerTime = 220*ns;
+    m_neutronSlowerRatio = 0.34;
+
+    m_alphaSlowerTime = 220*ns;
+    m_alphaSlowerRatio = 0.35;
+
+    m_doFastSim=false; // just the fast simulation
+
+    flagDecayTimeFast=true;
+    flagDecayTimeSlow=true;
+
+    //m_cerenPhotonScaleWeight = 3.125;
+    //m_scintPhotonScaleWeight = 3.125;
+    m_cerenPhotonScaleWeight = 1;
+    m_scintPhotonScaleWeight = 1;
+}
+
+void DsPhysConsOptical::SetTruePhysics(G4bool isTruePhysics){fTruePhysics = isTruePhysics;}

@@ -1,0 +1,17 @@
+# This macro just runs one single particle
+# to prove that the application works
+#
+# Run it using "./task macros/basic.mac"
+#/run/verbose 2
+/Optical/phys/verbose 1
+#/tracking/verbose 2
+/histo/fileName toBeDelete.root
+/Optical/phys/TruePhysics true
+/JUNO/primary/setRandom true
+/run/initialize
+#/random/setSeeds 0 1
+#/gun/particle opticalphoton
+#/gun/energy 3 eV
+#/gun/position 0 0 0 m
+#/gun/direction 0 0 1
+#/run/beamOn 100

@@ -1,0 +1,15 @@
+# This macro just runs one single particle
+# to prove that the application works
+#
+# Run it using "./task macros/basic.mac"
+/run/initialize
+/tracking/verbose 1
+#/gun/position 0 0 0 m
+#/gun/particle opticalphoton
+#/gun/momentum 0 0 10 eV
+#/gun/polarization 0 1 0
+/gps/particle e-
+/gps/position 0 0 0 m
+/gps/direction 0 0 1
+/gps/energy 1 MeV
+/run/beamOn 1000

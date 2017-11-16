@@ -201,15 +201,20 @@ void LSExpPhysicsList::ConstructProcess()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "G4ComptonScattering.hh"
+#include "G4LivermoreComptonModel.hh"
 #include "G4GammaConversion.hh"
+#include "G4LivermoreGammaConversionModel.hh"
 #include "G4PhotoElectricEffect.hh"
+#include "G4LivermorePhotoElectricModel.hh"
 
 #include "G4eMultipleScattering.hh"
 #include "G4MuMultipleScattering.hh"
 #include "G4hMultipleScattering.hh"
 
 #include "G4eIonisation.hh"
+#include "G4LivermoreIonisationModel.hh"
 #include "G4eBremsstrahlung.hh"
+#include "G4LivermoreBremsstrahlungModel.hh"
 #include "G4eplusAnnihilation.hh"
 
 #include "G4MuIonisation.hh"
@@ -229,15 +234,25 @@ void LSExpPhysicsList::ConstructEM() {
         if (particleName == "gamma") {
             // gamma
             // Construct processes for gamma
-            pmanager->AddDiscreteProcess(new G4GammaConversion());
-            pmanager->AddDiscreteProcess(new G4ComptonScattering());
-            pmanager->AddDiscreteProcess(new G4PhotoElectricEffect());
+            G4GammaConversion* gammaconv = new G4GammaConversion();
+            gammaconv->SetEmModel(new G4LivermoreGammaConversionModel());
+            pmanager->AddDiscreteProcess(gammaconv);
+            G4ComptonScattering* gammacomp = new G4ComptonScattering();
+            gammacomp->SetEmModel(new G4LivermoreComptonModel);
+            pmanager->AddDiscreteProcess(gammacomp);
+            G4PhotoElectricEffect* gammaphoe = new G4PhotoElectricEffect();
+            gammaphoe->SetEmModel(new G4LivermorePhotoElectricModel);
+            pmanager->AddDiscreteProcess(gammaphoe);
         } else if (particleName == "e-") {
             //electron
             // Construct processes for electron
             pmanager->AddProcess(new G4eMultipleScattering(),-1, 1, 1);
-            pmanager->AddProcess(new G4eIonisation(),       -1, 2, 2);
-            pmanager->AddProcess(new G4eBremsstrahlung(),   -1, 3, 3);
+            G4eIonisation* eion = new G4eIonisation();
+            eion->SetEmModel(new G4LivermoreIonisationModel());
+            pmanager->AddProcess(eion,       -1, 2, 2);
+            G4eBremsstrahlung* ebrem = new G4eBremsstrahlung();
+            ebrem->SetEmModel(new G4LivermoreBremsstrahlungModel());
+            pmanager->AddProcess(ebrem,   -1, 3, 3);
 
         } else if (particleName == "e+") {
             //positron

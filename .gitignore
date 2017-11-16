@@ -1,3 +1,13 @@
-_BUILD
 CMakeLists.txt.user
 tags
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+*.pdf
+*.root
+*.log
+*.txt
+*.png
+*.exe
+simjuno
