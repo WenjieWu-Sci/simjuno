@@ -6,7 +6,7 @@
 /Optical/phys/verbose 1
 #/tracking/verbose 2
 /histo/fileName toBeDelete.root
-/Optical/phys/TruePhysics true
+/Optical/phys/TruePhysics false
 /JUNO/primary/setRandom true
 /run/initialize
 #/random/setSeeds 0 1
