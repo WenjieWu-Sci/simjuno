@@ -12,7 +12,8 @@
 #/gui/addButton run "Beam On (1000)" "/run/beamOn 1000"
 #/gui/addButton run "Beam On (10000)" "/run/beamOn 10000"
 
-/run/initialize
+/control/execute /home/qihuang/JUNO/simjuno/_BUILD/op_para.mac
+#/run/initialize
 /vis/drawVolume
 /vis/scene/add/trajectories smooth
 /vis/scene/endOfEventAction accumulate
