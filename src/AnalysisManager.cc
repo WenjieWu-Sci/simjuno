@@ -1,6 +1,5 @@
 #include "AnalysisManager.hh"
 #include "EnergyTimeSD.hh"
-#include "EnergyTimeHit.hh"
 
 #include <G4Event.hh>
 #include <G4SDManager.hh>
@@ -53,6 +52,8 @@ void AnalysisManager::BeginOfRun() {
     if (thefile) {
         delete thefile;
     }
+    if(!AllDetected.empty())
+        AllDetected.clear();
     thefile= new TFile(m_filename, "RECREATE");
     bookEvtTree();
 }
@@ -126,6 +127,7 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     (*hit)->GetBoundaryProcessStatus()==10 && (*hit)->GetProcessName()=="Transportation") {
                 G4int tmp_nRayScattering= 0;
                 nPhotons++;
+                AllDetected.push_back((*hit));
                 if(nPhotons > 0){
                     X_Det[nPhotons-1]= (*hit)->GetPostPosition().getX();
                     Y_Det[nPhotons-1]= (*hit)->GetPostPosition().getY();

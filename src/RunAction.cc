@@ -6,6 +6,7 @@
 #include <G4SystemOfUnits.hh>
 
 #include "AnalysisManager.hh"
+#include "RecTimeLikeAlg.h"
 
 RunAction::RunAction() :
     G4UserRunAction(),
@@ -35,6 +36,11 @@ void RunAction::EndOfRunAction(const G4Run* run) {
     
     AnalysisManager* analysis= AnalysisManager::GetInstance();
     analysis->EndOfRun();
+    EnergyTimeHitVector theAllDetected = analysis->GetEnergyTimeHitVector();
+    RecTimeLikeAlg* aRecTimeLikeAlg = new RecTimeLikeAlg(theAllDetected);
+    aRecTimeLikeAlg->initialize();
+    aRecTimeLikeAlg->execute();
+    aRecTimeLikeAlg->finalize();
 
     //retrieve the number of events produced in the run
     G4int nofEvents = run->GetNumberOfEvent();

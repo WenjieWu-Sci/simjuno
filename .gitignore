@@ -7,7 +7,8 @@ cmake_install.cmake
 *.pdf
 *.root
 *.log
-*.txt
 *.png
 *.exe
+*.so
 simjuno
+_BUILD/*.txt

@@ -6,6 +6,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include "AnalysisManagerMessenger.hh"
+#include "EnergyTimeHit.hh"
 
 class AnalysisManager {
     public:
@@ -17,6 +18,7 @@ class AnalysisManager {
         void EndOfRun();
         void BeginOfEvent(const G4Event *event);
         void EndOfEvent(const G4Event* event);
+        std::vector<EnergyTimeHit*> GetEnergyTimeHitVector() {return AllDetected;}
         
     public:
         void setFileName(G4String i) { m_filename= i; }
@@ -53,6 +55,8 @@ class AnalysisManager {
         G4int fLSETId {-1};
         G4int fAcrylicETId { -1 };
         G4int fWaterETId { -1 };
+
+        std::vector<EnergyTimeHit*> AllDetected;
 };
 
 #endif

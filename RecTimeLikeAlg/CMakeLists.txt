@@ -1,0 +1,5 @@
+find_package(Boost 1.54.0 COMPONENTS filesystem regex)
+include_directories(${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIR} ${Geant4_INCLUDE_DIR})
+include_directories("include")
+add_library(RecTimeLikeAlg SHARED src/RecTimeLikeAlg.cc)
+target_link_libraries(RecTimeLikeAlg ${Boost_LIBRARIES} ${ROOT_LIBRARIES} ${Geant4_LIBRARIES} Minuit2 RIO Net Tree)

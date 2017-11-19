@@ -5,7 +5,7 @@
       <Option title="simjuno" />
       <Option makefile_is_custom="1" />
       <Option compiler="gcc" />
-      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\geant4.10.03.p02\;CMake Files\..\..\geant4.10.03.p02\lib64\;CMake Files\..\..\geant4.10.03.p02\lib64\Geant4-10.3.2\;CMake Files\..\..\geant4.10.03.p02\lib64\Geant4-10.3.2\Modules\;CMake Files\..\..\cern_root\;CMake Files\..\..\cern_root\etc\;CMake Files\..\..\cern_root\etc\cmake\;CMake Files\macros\;CMake Files\RecTimeLikeAlg\;" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\geant4.10.03.p02\;CMake Files\..\..\geant4.10.03.p02\lib64\;CMake Files\..\..\geant4.10.03.p02\lib64\Geant4-10.3.2\;CMake Files\..\..\geant4.10.03.p02\lib64\Geant4-10.3.2\Modules\;CMake Files\..\..\cern_root\;CMake Files\..\..\cern_root\cmake\;CMake Files\..\..\cern_root\cmake\modules\;CMake Files\macros\;CMake Files\RecTimeLikeAlg\;" />
       <Build>
       <Target title="all">
          <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD" />
@@ -78,8 +78,8 @@
          </MakeCommands>
       </Target>
       <Target title="simjuno">
-         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/simjuno" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD" />
+         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/bin/simjuno" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD/bin" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -121,8 +121,8 @@
          </MakeCommands>
       </Target>
       <Target title="simjuno/fast">
-         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/simjuno" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD" />
+         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/bin/simjuno" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD/bin" />
          <Option object_output="./" />
          <Option type="1" />
          <Option compiler="gcc" />
@@ -164,10 +164,10 @@
          </MakeCommands>
       </Target>
       <Target title="RecTimeLikeAlg">
-         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/RecTimeLikeAlg/libRecTimeLikeAlg.a" prefix_auto="0" extension_auto="0" />
+         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/lib/libRecTimeLikeAlg.so" prefix_auto="0" extension_auto="0" />
          <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD/RecTimeLikeAlg" />
          <Option object_output="./" />
-         <Option type="2" />
+         <Option type="3" />
          <Option compiler="gcc" />
          <Compiler>
             <Add option="-DG4_STORE_TRAJECTORY" />
@@ -207,10 +207,10 @@
          </MakeCommands>
       </Target>
       <Target title="RecTimeLikeAlg/fast">
-         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/RecTimeLikeAlg/libRecTimeLikeAlg.a" prefix_auto="0" extension_auto="0" />
+         <Option output="/home/qihuang/JUNO/simjuno/_BUILD/lib/libRecTimeLikeAlg.so" prefix_auto="0" extension_auto="0" />
          <Option working_dir="/home/qihuang/JUNO/simjuno/_BUILD/RecTimeLikeAlg" />
          <Option object_output="./" />
-         <Option type="2" />
+         <Option type="3" />
          <Option compiler="gcc" />
          <Compiler>
             <Add option="-DG4_STORE_TRAJECTORY" />
@@ -391,8 +391,32 @@
       <Unit filename="/home/qihuang/JUNO/simjuno/../../geant4.10.03.p02/lib64/Geant4-10.3.2/Modules/IntelCompileFeatures.cmake">
           <Option virtualFolder="CMake Files\..\..\geant4.10.03.p02\lib64\Geant4-10.3.2\Modules\" />
       </Unit>
-      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/etc/cmake/FindROOT.cmake">
-          <Option virtualFolder="CMake Files\..\..\cern_root\etc\cmake\" />
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/ROOTConfig-version.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/ROOTConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/ROOTConfig-targets.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/ROOTConfig-targets-relwithdebinfo.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/ROOTUseFile.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/modules/RootNewMacros.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\modules\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/modules/CMakeMacroParseArguments.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\modules\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/modules/CheckCompiler.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\modules\" />
+      </Unit>
+      <Unit filename="/home/qihuang/JUNO/simjuno/../../cern_root/cmake/modules/SetUpLinux.cmake">
+          <Option virtualFolder="CMake Files\..\..\cern_root\cmake\modules\" />
       </Unit>
       <Unit filename="/home/qihuang/JUNO/simjuno/macros/basic.mac">
           <Option virtualFolder="CMake Files\macros\" />
