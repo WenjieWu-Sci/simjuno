@@ -79,19 +79,19 @@ private:
     G4double LS_R;
     G4double ChaCenRec_ratio;
     EnergyTimeHitVector fAllDetected;
-//    ROOT::Minuit2::VariableMetricMinimizer theMinimizer;
+    ROOT::Minuit2::VariableMetricMinimizer theMinimizer;
 };
 
-//class MyFCN: public ROOT::Minuit2::FCNBase {
-//public:
-//    MyFCN(RecTimeLikeAlg* alg){m_alg =alg;}
-//    G4double operator() (const std::vector<G4double>& x)const{
-//        assert(x.size() == 4);
-//        return m_alg->Calculate_Energy_Likelihood(x[0],x[1],x[2],x[3]);
-//    }
+class MyFCN: public ROOT::Minuit2::FCNBase {
+public:
+    MyFCN(RecTimeLikeAlg* alg){m_alg =alg;}
+    G4double operator() (const std::vector<G4double>& x)const{
+        assert(x.size() == 4);
+        return m_alg->Calculate_Energy_Likelihood(x[0],x[1],x[2],x[3]);
+    }
 
-//    G4double Up() const {return 0.5;}
-//private:
-//    RecTimeLikeAlg* m_alg;
-//};
+    G4double Up() const {return 0.5;}
+private:
+    RecTimeLikeAlg* m_alg;
+};
 #endif

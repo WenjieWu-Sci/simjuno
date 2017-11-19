@@ -38,7 +38,7 @@ RecTimeLikeAlg::~RecTimeLikeAlg()
 bool RecTimeLikeAlg::initialize()
 {
 
-//    MyFCN* fcn = new MyFCN(this);
+    MyFCN* fcn = new MyFCN(this);
     Load_LikeFun();
     G4cout   << "   initialized successfully"
              << G4endl;
@@ -295,11 +295,11 @@ G4double RecTimeLikeAlg::CalculateTOF(G4ThreeVector v0, G4ThreeVector v1)
     return (v0-v1).r()*1.54/CLHEP::c_light/ns;
 }
 
-//G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
-//                                                     G4double m_x,
-//                                                     G4double m_y,
-//                                                     G4double m_z)
-//{
+G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
+                                                     G4double m_x,
+                                                     G4double m_y,
+                                                     G4double m_z)
+{
 //    G4double m_Likelihood = 0;
 //    for(G4int i = 0; i< Total_num_PMT; i++){
 //        G4double pmt_pos_x = ALL_PMT_pos.at(i).X()*PMT_R/Ball_R;
@@ -327,8 +327,8 @@ G4double RecTimeLikeAlg::CalculateTOF(G4ThreeVector v0, G4ThreeVector v1)
 //            m_Likelihood = m_Likelihood+m_expected_PE;
 //    }
 //    return m_Likelihood;
-//    return n0+m_x+m_y+m_z;
-//}
+    return n0+m_x+m_y+m_z;
+}
 
 bool RecTimeLikeAlg::finalize()
 {
