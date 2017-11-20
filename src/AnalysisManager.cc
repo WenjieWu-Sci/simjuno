@@ -127,8 +127,9 @@ void AnalysisManager::EndOfEvent(const G4Event* event) {
                     (*hit)->GetBoundaryProcessStatus()==10 && (*hit)->GetProcessName()=="Transportation") {
                 G4int tmp_nRayScattering= 0;
                 nPhotons++;
-                AllDetected.push_back((*hit));
                 if(nPhotons > 0){
+                    EnergyTimeHit* tmp_EnergyTimeHit = (*hit)->Clone();
+                    AllDetected.push_back(tmp_EnergyTimeHit);
                     X_Det[nPhotons-1]= (*hit)->GetPostPosition().getX();
                     Y_Det[nPhotons-1]= (*hit)->GetPostPosition().getY();
                     Z_Det[nPhotons-1]= (*hit)->GetPostPosition().getZ();

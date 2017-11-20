@@ -18,6 +18,7 @@ public:
     inline void* operator new(size_t);
     inline void  operator delete(void*);
     virtual void Print();
+    EnergyTimeHit* Clone() const;
     
     // setter
     void SetTrackStatus(G4int trackstatus) { fTrackStatus= trackstatus; }

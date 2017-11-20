@@ -14,13 +14,13 @@ and the non-linearity correction for positron
 #include "Minuit2/FCNBase.h"
 #include "Minuit2/FunctionMinimum.h"
 #include "Minuit2/MnUserParameterState.h"
+#include "Minuit2/MnPrint.h"
 #include "Minuit2/MnMigrad.h"
 #include <string>
 #include "TH1.h"
 #include "TF1.h"
 #include "TFile.h"
 #include "TTree.h"
-#include "TVector3.h"
 #include "G4SystemOfUnits.hh"
 #include "globals.hh"
 #include "G4PhysicalConstants.hh"
@@ -79,7 +79,7 @@ private:
     G4double LS_R;
     G4double ChaCenRec_ratio;
     EnergyTimeHitVector fAllDetected;
-    ROOT::Minuit2::VariableMetricMinimizer theMinimizer;
+    TFile* f_tmp;
 };
 
 class MyFCN: public ROOT::Minuit2::FCNBase {
@@ -90,7 +90,7 @@ public:
         return m_alg->Calculate_Energy_Likelihood(x[0],x[1],x[2],x[3]);
     }
 
-    G4double Up() const {return 0.5;}
+    G4double Up() const {return 1.;}
 private:
     RecTimeLikeAlg* m_alg;
 };
