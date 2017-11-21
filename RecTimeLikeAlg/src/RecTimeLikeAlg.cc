@@ -81,9 +81,12 @@ bool RecTimeLikeAlg::execute()
 //    upar.Add("y",ChaCenRec.y(),ChaCenRec.y()/100.);
 //    upar.Add("z",ChaCenRec.z(),ChaCenRec.z()/100.);
 
-    upar.Add("x",x_fit,x_fit/100.);
-    upar.Add("y",y_fit,y_fit/100.);
-    upar.Add("z",z_fit,z_fit/100.);
+    G4ThreeVector startpoint(x_fit,y_fit,z_fit);
+//    G4ThreeVector startpoint(ChaCenRec.x()*1.2,ChaCenRec.y()*1.2,ChaCenRec.z()*1.2);
+
+    upar.Add("x",startpoint.x(),startpoint.x()/10.);
+    upar.Add("y",startpoint.y(),startpoint.y()/10.);
+    upar.Add("z",startpoint.z(),startpoint.z()/10.);
 
     upar.SetLimits("n0",0,1e8);
     upar.SetLimits("x",-LS_R*10.,LS_R*10.);
@@ -92,9 +95,9 @@ bool RecTimeLikeAlg::execute()
 
     MnMigrad migrad(myfcn, upar);
 
-//    migrad.Fix(1);
-//    migrad.Fix(2);
-//    migrad.Fix(3);
+    migrad.Fix(1);
+    migrad.Fix(2);
+    migrad.Fix(3);
 
     MnPrint::SetLevel(3);
     G4cout << "Print Level is " << MnPrint::Level() << G4endl;
@@ -258,7 +261,7 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
 {
     f_tmp->cd();
     G4double m_Likelihood = 0;
-    TH1D* hcos = new TH1D("hcos","hcos",500,-1,1);
+    TH1D* hcos = new TH1D("hcos","hcos",100,-1,1);
     G4ThreeVector m_v(m_x,m_y,m_z);
     if(m_v.r()>LS_R){
         delete hcos;
@@ -288,9 +291,7 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
         G4double cos_theta = hcos->GetBinCenter(i);
         G4double ratio = m_v.r()/LS_R;
         G4double exp = n0*0.5*(1-ratio*cos_theta)/TMath::Power((1+ratio*ratio-2*ratio*cos_theta),3./2)*hcos->GetBinWidth(i);
-        TF1* poisson = new TF1("poisson","TMath::Poisson(x,[0])",0,exp*2);
-        poisson->SetParameter(0,exp);
-        G4double tmp = poisson->Eval(obs);
+        G4double tmp = TMath::Poisson(obs,exp);
 
         m_Likelihood -= TMath::Log(tmp);
     }
