@@ -77,13 +77,13 @@ bool RecTimeLikeAlg::execute()
     MyFCN myfcn(this);
     MnUserParameters upar;
     upar.Add("n0",n_fit,n_fit/100.);
-//    upar.Add("x",ChaCenRec.x(),10000.);
-//    upar.Add("y",ChaCenRec.y(),10000.);
-//    upar.Add("z",ChaCenRec.z(),10000.);
+    upar.Add("x",ChaCenRec.x(),ChaCenRec.x()/100.);
+    upar.Add("y",ChaCenRec.y(),ChaCenRec.y()/100.);
+    upar.Add("z",ChaCenRec.z(),ChaCenRec.z()/100.);
 
-    upar.Add("x",x_fit,x_fit/100.);
-    upar.Add("y",y_fit,y_fit/100.);
-    upar.Add("z",z_fit,z_fit/100.);
+//    upar.Add("x",x_fit,x_fit/100.);
+//    upar.Add("y",y_fit,y_fit/100.);
+//    upar.Add("z",z_fit,z_fit/100.);
 
 //    upar.SetLimits("n0",0,1e8);
 //    upar.SetLimits("x",-LS_R,LS_R);
@@ -95,11 +95,6 @@ bool RecTimeLikeAlg::execute()
 //    migrad.Fix(1);
 //    migrad.Fix(2);
 //    migrad.Fix(3);
-
-//    MnScan scan(myfcn, upar);
-//    std::vector<std::pair<double,double>> points1 = scan.Scan(1,2000);
-//    std::vector<std::pair<double,double>> points2 = scan.Scan(2,2000);
-//    std::vector<std::pair<double,double>> points3 = scan.Scan(3,2000);
 
     MnPrint::SetLevel(3);
     G4cout << "Print Level is " << MnPrint::Level() << G4endl;
@@ -120,39 +115,6 @@ bool RecTimeLikeAlg::execute()
 //    G4cout<<"The Reconstruction chi2 minimum is " << min.UserState().Value(0) << G4endl;
     G4cout<<"The Complete Reconstrution Process is Completed!"<<G4endl;
     G4cout<<"==========================================================="<<G4endl;
-
-//    TGraph* g1 = new TGraph(points1.size());
-//    for(std::vector<std::pair<double,double>>::iterator it = points1.begin(); it!=points1.end(); ++it)
-//    {
-//        g1->SetPoint(g1->GetN(),it->first,it->second);
-//    }
-//    g1->SetTitle(TString::Format("g1 %d step",points1.size()));
-//    g1->SetMarkerStyle(2);
-
-//    TGraph* g2 = new TGraph(points2.size());
-//    for(std::vector<std::pair<double,double>>::iterator it = points2.begin(); it!=points2.end(); ++it)
-//    {
-//        g2->SetPoint(g2->GetN(),it->first,it->second);
-//    }
-//    g2->SetTitle(TString::Format("g2 %d step",points2.size()));
-//    g2->SetMarkerStyle(2);
-
-//    TGraph* g3 = new TGraph(points3.size());
-//    for(std::vector<std::pair<double,double>>::iterator it = points3.begin(); it!=points3.end(); ++it)
-//    {
-//        g3->SetPoint(g3->GetN(),it->first,it->second);
-//    }
-//    g3->SetTitle(TString::Format("g3 %d step",points3.size()));
-//    g3->SetMarkerStyle(2);
-//    f_tmp->cd();
-//    g1->Write();
-//    g2->Write();
-//    g3->Write();
-
-//    delete g1;
-//    delete g2;
-//    delete g3;
-
     return true;
 }
 
@@ -275,7 +237,6 @@ bool RecTimeLikeAlg::GridSearch()
             m_like_time = delta;
             m_ratio  = 1.2+0.1*init_val;
         }
-        //  G4cout<<delta<<G4endl;
     }
     tmp_ve_x = sign_x;
     tmp_ve_y = sign_y;
