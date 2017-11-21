@@ -4,6 +4,7 @@
 #include "TTree.h"
 #include "TH1.h"
 #include "TF1.h"
+#include "TGraph.h"
 #include "TString.h"
 #include "TStopwatch.h"
 
@@ -70,24 +71,40 @@ bool RecTimeLikeAlg::execute()
     G4double y_fit = tmp_ve_y;
     G4double z_fit = tmp_ve_z;
     G4double t_fit = tmp_t_zero;
-    G4double n_fit = 1e5;
+    G4double n_fit = 1e4;
 
     f_tmp = new TFile("test.root","recreate");
     MyFCN myfcn(this);
     MnUserParameters upar;
     upar.Add("n0",n_fit,1000.);
-    upar.Add("x",ChaCenRec.x(),1000.);
-    upar.Add("y",ChaCenRec.y(),1000.);
-    upar.Add("z",ChaCenRec.z(),1000.);
+//    upar.Add("x",ChaCenRec.x(),10000.);
+//    upar.Add("y",ChaCenRec.y(),10000.);
+//    upar.Add("z",ChaCenRec.z(),10000.);
 
-    upar.SetLimits("n0",0,1e8);
-    upar.SetLimits("x",-LS_R,LS_R);
-    upar.SetLimits("y",-LS_R,LS_R);
-    upar.SetLimits("z",-LS_R,LS_R);
+    upar.Add("x",x_fit,100.);
+    upar.Add("y",y_fit,100.);
+    upar.Add("z",z_fit,100.);
+
+//    upar.SetLimits("n0",0,1e8);
+//    upar.SetLimits("x",-LS_R,LS_R);
+//    upar.SetLimits("y",-LS_R,LS_R);
+//    upar.SetLimits("z",-LS_R,LS_R);
 
     MnMigrad migrad(myfcn, upar);
 
-    FunctionMinimum min = migrad();
+    migrad.Fix(1);
+    migrad.Fix(2);
+    migrad.Fix(3);
+
+//    MnScan scan(myfcn, upar);
+//    std::vector<std::pair<double,double>> points1 = scan.Scan(1,2000);
+//    std::vector<std::pair<double,double>> points2 = scan.Scan(2,2000);
+//    std::vector<std::pair<double,double>> points3 = scan.Scan(3,2000);
+
+    MnPrint::SetLevel(6);
+    G4cout << "Print Level is " << MnPrint::Level() << G4endl;
+
+    FunctionMinimum min = migrad(5000);
     G4cout << min << G4endl;
 
     G4cout <<"ChaCenRec:("<<ChaCenRec.x()/m<<"m,"<<ChaCenRec.y()/m<<"m,"<<ChaCenRec.z()/m<<"m)"<<G4endl;
@@ -103,6 +120,39 @@ bool RecTimeLikeAlg::execute()
 //    G4cout<<"The Reconstruction chi2 minimum is " << min.UserState().Value(0) << G4endl;
     G4cout<<"The Complete Reconstrution Process is Completed!"<<G4endl;
     G4cout<<"==========================================================="<<G4endl;
+
+//    TGraph* g1 = new TGraph(points1.size());
+//    for(std::vector<std::pair<double,double>>::iterator it = points1.begin(); it!=points1.end(); ++it)
+//    {
+//        g1->SetPoint(g1->GetN(),it->first,it->second);
+//    }
+//    g1->SetTitle(TString::Format("g1 %d step",points1.size()));
+//    g1->SetMarkerStyle(2);
+
+//    TGraph* g2 = new TGraph(points2.size());
+//    for(std::vector<std::pair<double,double>>::iterator it = points2.begin(); it!=points2.end(); ++it)
+//    {
+//        g2->SetPoint(g2->GetN(),it->first,it->second);
+//    }
+//    g2->SetTitle(TString::Format("g2 %d step",points2.size()));
+//    g2->SetMarkerStyle(2);
+
+//    TGraph* g3 = new TGraph(points3.size());
+//    for(std::vector<std::pair<double,double>>::iterator it = points3.begin(); it!=points3.end(); ++it)
+//    {
+//        g3->SetPoint(g3->GetN(),it->first,it->second);
+//    }
+//    g3->SetTitle(TString::Format("g3 %d step",points3.size()));
+//    g3->SetMarkerStyle(2);
+//    f_tmp->cd();
+//    g1->Write();
+//    g2->Write();
+//    g3->Write();
+
+//    delete g1;
+//    delete g2;
+//    delete g3;
+
     return true;
 }
 
@@ -247,8 +297,12 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
 {
     f_tmp->cd();
     G4double m_Likelihood = 0;
-    TH1D* hcos = new TH1D("hcos","hcos",100,-1,1);
+    TH1D* hcos = new TH1D("hcos","hcos",1000,-1,1);
     G4ThreeVector m_v(m_x,m_y,m_z);
+    if(m_v.r()>LS_R){
+        delete hcos;
+        return 1e8;
+    }
     for(EnergyTimeHitVector::iterator it=fAllDetected.begin();
         it != fAllDetected.end(); ++it){
         G4ThreeVector m_hit = (*it)->GetPostPosition();
@@ -259,22 +313,25 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
             theta = m_v.angle(m_hit)*rad;
         if(theta <= pi && theta>0 ){
             G4double cos_theta = TMath::Cos(theta);
-            hcos->SetTitle(TString::Format("%g,%g,%g",m_x,m_y,m_z));
+            hcos->SetTitle(TString::Format("x = %g, y = %g, z = %g",m_x,m_y,m_z));
             hcos->Fill(cos_theta);
         }
         else{
             G4cout << "theta out of range: " << theta << G4endl;
         }
     }
-    for(G4int i=1;i<=100;i++){
+    for(G4int i=1;i<=hcos->GetNbinsX();i++){
         G4double obs=(G4double)hcos->GetBinContent(i);
         if(!obs) continue;
         G4double cos_theta = hcos->GetBinCenter(i);
         G4double ratio = m_v.r()/LS_R;
-        G4double binsize = hcos->GetBinWidth(i);
-        G4double exp = n0*0.5*(1-ratio*cos_theta)/TMath::Power((1+ratio*ratio-2*ratio*cos_theta),3./2)*binsize;
-        m_Likelihood += (obs-exp)*(obs-exp)/exp;
+        G4double exp = n0*0.5*(1-ratio*cos_theta)/TMath::Power((1+ratio*ratio-2*ratio*cos_theta),3./2)*hcos->GetBinWidth(i);
+        G4double tmp = (obs-exp)/hcos->GetBinError(i);
+        m_Likelihood += tmp*tmp;
     }
+    TF1* f = new TF1("PDF",PhotoPDF,-1.,1.,5);
+    f->SetParameters(n0,m_x,m_y,m_z,2./hcos->GetNbinsX());
+    hcos->GetListOfFunctions()->Add(f);
     hcos->Write();
     delete hcos;
     return m_Likelihood;
@@ -287,4 +344,11 @@ bool RecTimeLikeAlg::finalize()
     f_tmp->Close();
     delete f_tmp;
     return true;
+}
+
+double PhotoPDF(double *x, double *par)
+{
+    G4double ratio = TMath::Sqrt(par[1]*mm*par[1]*mm + par[2]*mm*par[2]*mm +par[3]*mm*par[3]*mm)/(17.7*m);
+    G4double exp = par[0]*0.5*(1-ratio*x[0])/TMath::Power((1+ratio*ratio-2*ratio*x[0]),3./2)*par[4];
+    return exp;
 }

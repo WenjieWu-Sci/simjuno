@@ -16,6 +16,7 @@ and the non-linearity correction for positron
 #include "Minuit2/MnUserParameterState.h"
 #include "Minuit2/MnPrint.h"
 #include "Minuit2/MnMigrad.h"
+#include "Minuit2/MnScan.h"
 #include <string>
 #include "TH1.h"
 #include "TF1.h"
@@ -94,4 +95,6 @@ public:
 private:
     RecTimeLikeAlg* m_alg;
 };
+
+double PhotoPDF(double* x, double* par);
 #endif
