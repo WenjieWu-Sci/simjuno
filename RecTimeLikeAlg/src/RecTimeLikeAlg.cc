@@ -71,19 +71,19 @@ bool RecTimeLikeAlg::execute()
     G4double y_fit = tmp_ve_y;
     G4double z_fit = tmp_ve_z;
     G4double t_fit = tmp_t_zero;
-    G4double n_fit = 1e4;
+    G4double n_fit = fAllDetected.size();
 
     f_tmp = new TFile("test.root","recreate");
     MyFCN myfcn(this);
     MnUserParameters upar;
-    upar.Add("n0",n_fit,1000.);
+    upar.Add("n0",n_fit,n_fit/100.);
 //    upar.Add("x",ChaCenRec.x(),10000.);
 //    upar.Add("y",ChaCenRec.y(),10000.);
 //    upar.Add("z",ChaCenRec.z(),10000.);
 
-    upar.Add("x",x_fit,100.);
-    upar.Add("y",y_fit,100.);
-    upar.Add("z",z_fit,100.);
+    upar.Add("x",x_fit,x_fit/100.);
+    upar.Add("y",y_fit,y_fit/100.);
+    upar.Add("z",z_fit,z_fit/100.);
 
 //    upar.SetLimits("n0",0,1e8);
 //    upar.SetLimits("x",-LS_R,LS_R);
@@ -92,19 +92,19 @@ bool RecTimeLikeAlg::execute()
 
     MnMigrad migrad(myfcn, upar);
 
-    migrad.Fix(1);
-    migrad.Fix(2);
-    migrad.Fix(3);
+//    migrad.Fix(1);
+//    migrad.Fix(2);
+//    migrad.Fix(3);
 
 //    MnScan scan(myfcn, upar);
 //    std::vector<std::pair<double,double>> points1 = scan.Scan(1,2000);
 //    std::vector<std::pair<double,double>> points2 = scan.Scan(2,2000);
 //    std::vector<std::pair<double,double>> points3 = scan.Scan(3,2000);
 
-    MnPrint::SetLevel(6);
+    MnPrint::SetLevel(3);
     G4cout << "Print Level is " << MnPrint::Level() << G4endl;
 
-    FunctionMinimum min = migrad(5000);
+    FunctionMinimum min = migrad(5000,1e-2);
     G4cout << min << G4endl;
 
     G4cout <<"ChaCenRec:("<<ChaCenRec.x()/m<<"m,"<<ChaCenRec.y()/m<<"m,"<<ChaCenRec.z()/m<<"m)"<<G4endl;
@@ -297,7 +297,7 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
 {
     f_tmp->cd();
     G4double m_Likelihood = 0;
-    TH1D* hcos = new TH1D("hcos","hcos",1000,-1,1);
+    TH1D* hcos = new TH1D("hcos","hcos",100,-1,1);
     G4ThreeVector m_v(m_x,m_y,m_z);
     if(m_v.r()>LS_R){
         delete hcos;
@@ -313,7 +313,7 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
             theta = m_v.angle(m_hit)*rad;
         if(theta <= pi && theta>0 ){
             G4double cos_theta = TMath::Cos(theta);
-            hcos->SetTitle(TString::Format("x = %g, y = %g, z = %g",m_x,m_y,m_z));
+            hcos->SetTitle(TString::Format("n_{0} = %g, x = %g, y = %g, z = %g",n0,m_x,m_y,m_z));
             hcos->Fill(cos_theta);
         }
         else{
@@ -329,6 +329,7 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
         G4double tmp = (obs-exp)/hcos->GetBinError(i);
         m_Likelihood += tmp*tmp;
     }
+//    G4cout << "chisquare is " <<  m_Likelihood << G4endl;
     TF1* f = new TF1("PDF",PhotoPDF,-1.,1.,5);
     f->SetParameters(n0,m_x,m_y,m_z,2./hcos->GetNbinsX());
     hcos->GetListOfFunctions()->Add(f);
