@@ -91,7 +91,7 @@ public:
         return m_alg->Calculate_Energy_Likelihood(x[0],x[1],x[2],x[3]);
     }
 
-    G4double Up() const {return 1.;}
+    G4double Up() const {return .5;}
 private:
     RecTimeLikeAlg* m_alg;
 };

@@ -77,18 +77,18 @@ bool RecTimeLikeAlg::execute()
     MyFCN myfcn(this);
     MnUserParameters upar;
     upar.Add("n0",n_fit,n_fit/100.);
-    upar.Add("x",ChaCenRec.x(),ChaCenRec.x()/100.);
-    upar.Add("y",ChaCenRec.y(),ChaCenRec.y()/100.);
-    upar.Add("z",ChaCenRec.z(),ChaCenRec.z()/100.);
+//    upar.Add("x",ChaCenRec.x(),ChaCenRec.x()/100.);
+//    upar.Add("y",ChaCenRec.y(),ChaCenRec.y()/100.);
+//    upar.Add("z",ChaCenRec.z(),ChaCenRec.z()/100.);
 
-//    upar.Add("x",x_fit,x_fit/100.);
-//    upar.Add("y",y_fit,y_fit/100.);
-//    upar.Add("z",z_fit,z_fit/100.);
+    upar.Add("x",x_fit,x_fit/100.);
+    upar.Add("y",y_fit,y_fit/100.);
+    upar.Add("z",z_fit,z_fit/100.);
 
-//    upar.SetLimits("n0",0,1e8);
-//    upar.SetLimits("x",-LS_R,LS_R);
-//    upar.SetLimits("y",-LS_R,LS_R);
-//    upar.SetLimits("z",-LS_R,LS_R);
+    upar.SetLimits("n0",0,1e8);
+    upar.SetLimits("x",-LS_R*10.,LS_R*10.);
+    upar.SetLimits("y",-LS_R*10.,LS_R*10.);
+    upar.SetLimits("z",-LS_R*10.,LS_R*10.);
 
     MnMigrad migrad(myfcn, upar);
 
@@ -99,7 +99,7 @@ bool RecTimeLikeAlg::execute()
     MnPrint::SetLevel(3);
     G4cout << "Print Level is " << MnPrint::Level() << G4endl;
 
-    FunctionMinimum min = migrad(5000,1e-2);
+    FunctionMinimum min = migrad(5000);
     G4cout << min << G4endl;
 
     G4cout <<"ChaCenRec:("<<ChaCenRec.x()/m<<"m,"<<ChaCenRec.y()/m<<"m,"<<ChaCenRec.z()/m<<"m)"<<G4endl;
@@ -258,11 +258,11 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
 {
     f_tmp->cd();
     G4double m_Likelihood = 0;
-    TH1D* hcos = new TH1D("hcos","hcos",100,-1,1);
+    TH1D* hcos = new TH1D("hcos","hcos",500,-1,1);
     G4ThreeVector m_v(m_x,m_y,m_z);
     if(m_v.r()>LS_R){
         delete hcos;
-        return 1e8;
+        return TMath::Exp(m_v.r()-LS_R);
     }
     for(EnergyTimeHitVector::iterator it=fAllDetected.begin();
         it != fAllDetected.end(); ++it){
@@ -278,17 +278,21 @@ G4double RecTimeLikeAlg::Calculate_Energy_Likelihood(G4double n0,
             hcos->Fill(cos_theta);
         }
         else{
+            G4cout << m_v << G4endl;
+            G4cout << m_hit << G4endl;
             G4cout << "theta out of range: " << theta << G4endl;
         }
     }
     for(G4int i=1;i<=hcos->GetNbinsX();i++){
         G4double obs=(G4double)hcos->GetBinContent(i);
-        if(!obs) continue;
         G4double cos_theta = hcos->GetBinCenter(i);
         G4double ratio = m_v.r()/LS_R;
         G4double exp = n0*0.5*(1-ratio*cos_theta)/TMath::Power((1+ratio*ratio-2*ratio*cos_theta),3./2)*hcos->GetBinWidth(i);
-        G4double tmp = (obs-exp)/hcos->GetBinError(i);
-        m_Likelihood += tmp*tmp;
+        TF1* poisson = new TF1("poisson","TMath::Poisson(x,[0])",0,exp*2);
+        poisson->SetParameter(0,exp);
+        G4double tmp = poisson->Eval(obs);
+
+        m_Likelihood -= TMath::Log(tmp);
     }
 //    G4cout << "chisquare is " <<  m_Likelihood << G4endl;
     TF1* f = new TF1("PDF",PhotoPDF,-1.,1.,5);
