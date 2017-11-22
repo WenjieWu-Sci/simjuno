@@ -42,9 +42,11 @@ TH1D *h1, *h2;
 Int_t npfits;
 Int_t totalnum(0);
 double x_init(0.),y_init(0.), z_init(0.);
+double x_chacen(0.),y_chacen(0.),z_chacen(0.);
 const UInt_t num_par = 5;
 bool option_fix = false;
 bool option_allphoton = false;
+bool option_chacen = false;
 
 using namespace std;
 
@@ -134,7 +136,13 @@ void FillHisto(TH1D ** h, TTree* t) {
         totalnum++;
         h[0]->Fill(xi);
         h[1]->Fill(cos_theta);
+        x_chacen += x1;
+        y_chacen += y1;
+        z_chacen += z1;
     }
+    x_chacen = 1.2*x_chacen/totalnum;
+    y_chacen = 1.2*y_chacen/totalnum;
+    z_chacen = 1.2*z_chacen/totalnum;
 }
 
 int main(int argc, char** argv) {
@@ -146,6 +154,9 @@ int main(int argc, char** argv) {
         TString argv2(argv[2]);
         if(argv2=="all")
             option_allphoton = true;
+        TString argv3(argv[3]);
+        if(argv3 == "chacen")
+            option_chacen = true;
     }
 
     // create two histograms
@@ -182,7 +193,19 @@ int main(int argc, char** argv) {
     FillHisto(h,t);
 
     double totalnum_d = static_cast<double>(totalnum);
-    double iniParams[num_par] = { totalnum_d, x_init, y_init, z_init, 0. };
+    double iniParams[num_par];
+    for(int i=0;i<num_par;i++)
+        iniParams[i] = 0.;
+    if(option_chacen){
+        double iniParams_t[num_par] = { totalnum_d, x_chacen, y_chacen, z_chacen, 0. };
+        for(int i=0;i<num_par;i++)
+            iniParams[i] = iniParams_t[i];
+    }
+    else{
+        double iniParams_t[num_par] = { totalnum_d, x_init, y_init, z_init, 0. };
+        for(int i=0;i<num_par;i++)
+            iniParams[i] = iniParams_t[i];
+    }
     // create fit function
     TF1 * f1 = new TF1("time_fit",timefunc,xlow1,xup1,num_par);
     f1->SetParameters(iniParams);
